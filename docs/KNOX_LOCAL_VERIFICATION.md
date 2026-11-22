@@ -69,6 +69,32 @@ The first full run's PASS logs remain useful evidence; this command reruns
 the tests and build after fixes, overwriting `knox-verification.log` with
 the latest acceptance result.
 
+
+## Run the live simulator — one CMD window
+
+Once local MongoDB is installed and running, open CMD in the project root:
+
+\`\`\`cmd
+git pull --ff-only
+npm.cmd run dev
+\`\`\`
+
+On later launches, just \`npm.cmd run dev\` is needed. This starts both
+the backend API on **http://localhost:3001** and the frontend on
+**http://localhost:5173/simulator**; no second terminal or root \`npm ci\`
+is required. The launcher creates \`backend/.env\` from \`.env.example\` if
+missing and installs backend/frontend dependencies if needed.
+
+The default database is \`mongodb://127.0.0.1:27017/zero_export\`. MongoDB
+is an external prerequisite and is **not automatically installed or
+started** by this command. If its connection fails, check that MongoDB is
+running and the connection URI in \`backend/.env\` is correct.
+
+The Knox simulator auto-starts in development mode on Modbus TCP **502**,
+unit ID **3** (unless saved settings override these defaults). If port 502
+is already in use, stop the other Modbus server or adjust the simulator's
+port in the UI. Press **Ctrl+C** in the CMD window to stop both servers.
+
 ## Test report
 
 Terminal output is copied to **`knox-verification.log`** in the repo root.
