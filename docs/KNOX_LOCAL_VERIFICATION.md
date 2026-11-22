@@ -55,6 +55,20 @@ npm.cmd run verify:knox
 Every step is sequential: if a step fails, the runner exits nonzero and
 does not falsely report success.
 
+## Rerun after a fix
+
+If `npm ci` has already installed both sets of dependencies, update the
+feature branch and use the fast path (no repeated dependency download):
+
+```cmd
+git pull --ff-only
+npm.cmd run verify:knox -- --skip-install
+```
+
+The first full run's PASS logs remain useful evidence; this command reruns
+the tests and build after fixes, overwriting `knox-verification.log` with
+the latest acceptance result.
+
 ## Test report
 
 Terminal output is copied to **`knox-verification.log`** in the repo root.
