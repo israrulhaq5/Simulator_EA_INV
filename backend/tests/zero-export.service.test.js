@@ -303,3 +303,47 @@ test('zero-export configuration schema validates and cross-checks derating limit
     (error) => error.name === 'ZodError',
   );
 });
+
+test('zero-export converts normalized 78% into Knox 45403 raw 7800', async () => {
+  const { service, writes } = serviceWith({ meterValue: latest(1, -5000, 'W') });
+  service.configurationRepository.getOrDefault = async () =>
+    configuration({
+      inverterRegisterAddress: 5402,
+      inverterRegisterScaleFactor: 0.01,
+    });
+  service.deratingRaw = 800; // 80% prior normalized limit
+  await service.tick();
+  assert.equal(writes.length, 1);
+  assert.equal(writes[0].address, 5402);
+  assert.equal(writes[0].value, 7800);
+  assert.equal(service.getStatus().lastDeratingPercent, 78);
+});
+
+test('zero-export simulation converts Knox inverter watts to kW before calculating grid', async () => {
+  const { service, writes } = serviceWith({ inverterValue: latest(1, 70000, 'W') });
+  service.configurationRepository.getOrDefault = async () =>
+    configuration({
+      simulation: { enabled: true, loadKw: 100 },
+      inverterRegisterAddress: 5402,
+      inverterRegisterScaleFactor: 0.01,
+    });
+  service.deratingRaw = 500;
+  await service.tick();
+  assert.equal(service.lastGridKw, 30);
+  assert.equal(writes[0].value, 5200);
+});
+
+test('Knox failsafe writes raw 0 when meter stale', async () => {
+  const { service, writes } = serviceWith({ meterValue: latest(600, -5000, 'W') });
+  service.configurationRepository.getOrDefault = async () =>
+    configuration({
+      inverterRegisterAddress: 5402,
+      inverterRegisterScaleFactor: 0.01,
+    });
+  service.deratingRaw = 600;
+  for (let i = 0; i < 3; i += 1) await service.tick();
+  assert.equal(writes.length, 1);
+  assert.equal(writes[0].address, 5402);
+  assert.equal(writes[0].value, 0);
+  assert.equal(service.actions[0].outcome, 'FAILSAFE');
+});
