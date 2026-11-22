@@ -121,10 +121,16 @@ class SimulatorController {
     if (linked) {
       const patch = {};
       if (body.unitId !== undefined) patch.unitId = desired.unitId;
-      if (body.port !== undefined) {
+      if (body.port !== undefined || body.host !== undefined) {
+        // Binding to all interfaces is not a connectable destination.
+        // Loop back locally, or use the explicit edited bind address.
+        const host =
+          body.host === undefined
+            ? (linked.connection?.host || '127.0.0.1')
+            : (['0.0.0.0', '::'].includes(body.host) ? '127.0.0.1' : body.host);
         patch.connection = {
           protocol: linked.connection?.protocol || 'TCP',
-          host: linked.connection?.host || '127.0.0.1',
+          host,
           port: desired.port,
         };
       }
