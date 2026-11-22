@@ -182,11 +182,12 @@ test('Huawei simulator serves holding registers and accepts derating writes', as
 
 test('simulator manager exposes every device and their values', async () => {
   const status = getStatus();
-  assert.deepEqual(Object.keys(status.devices).sort(), ['em500', 'huawei', 'solis', 'sungrow']);
+  assert.deepEqual(Object.keys(status.devices).sort(), ['em500', 'huawei', 'knox', 'solis', 'sungrow']);
   // Stopped devices serve no values until started and ticked.
   assert.equal(getValues('em500').length, 0);
   assert.equal(getValues('huawei').length, 0);
   assert.equal(getValues('solis').length, 0);
+  assert.equal(getValues('knox').length, 0);
   assert.equal(getValues('unknown').length, 0);
   assert.equal(simulatorDevices.huawei.getStatus().port, 15021);
   assert.equal(simulatorDevices.huawei.getStatus().unitId, 2);
@@ -199,6 +200,9 @@ test('simulator manager exposes every device and their values', async () => {
   assert.equal(simulatorDevices.sungrow.getStatus().port, 15023);
   assert.equal(simulatorDevices.sungrow.getStatus().unitId, 4);
   assert.equal(simulatorDevices.sungrow.getStatus().deviceType, 'Sungrow inverter');
+  assert.equal(simulatorDevices.knox.getStatus().port, 502);
+  assert.equal(simulatorDevices.knox.getStatus().unitId, 3);
+  assert.equal(simulatorDevices.knox.getStatus().deviceType, 'Knox 110 kW inverter');
 });
 
 test('Solis simulator serves FC04 inputs and accepts active power limit writes', async () => {

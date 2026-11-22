@@ -118,7 +118,7 @@ const KNOX_ASW110_PROFILE = Object.freeze({
   maxReadQuantity: 100,
   tags: Object.freeze(['knox', 'aiswei', '110kw', 'inverter', 'built-in']),
   metadata: Object.freeze({
-    profileVersion: 1,
+    profileVersion: 2,
     notes: 'Derived from user-provided AISWEI Modbus V2.1.5 PDF. Addresses are 3xxxx/4xxxx minus 30001/40001 respectively. This is a selected operational subset, not the full AISWEI register catalog. Check device firmware before physical write-through.',
   }),
 });

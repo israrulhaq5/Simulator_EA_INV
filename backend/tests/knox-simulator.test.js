@@ -5,6 +5,7 @@ const test = require('node:test');
 const { REGISTER_TYPES } = require('../src/constants/modbus');
 const { SimulatorDevice } = require('../src/simulator/simulator-device');
 const { KNOX_ASW110_PROFILE, wireAddress } = require('../src/seed/knox-asw110.profile');
+const { createRegisterProfileBodySchema } = require('../src/validators/register-profile.validator');
 
 function knox() {
   return new SimulatorDevice({
@@ -20,6 +21,12 @@ function knox() {
     },
   });
 }
+
+test('Knox profile passes the same schema as physical inverter maps', () => {
+  const parsed = createRegisterProfileBodySchema.parse(KNOX_ASW110_PROFILE);
+  assert.equal(parsed.identifier, 'knox-asw110');
+  assert.equal(parsed.registers.length, 64);
+});
 
 test('Knox manual references resolve to zero-based FC04/FC03 wire addresses', () => {
   assert.equal(wireAddress(31001), 1000);
