@@ -218,10 +218,13 @@ export function ZeroExportView({ devices, profiles, notify }) {
     if (!simulation?.enabled) return;
     const loadKw = Number(simulation.loadKw);
     try {
-      await api.updateSimulatorDevice("em500", { options: { loadKw } });
-      await api.updateSimulatorDevice("huawei", { options: { loadKw } });
-      await api.updateSimulatorDevice("solis", { options: { loadKw } });
-      await api.updateSimulatorDevice("knox", { options: { loadKw } });
+      // A stopped/unavailable simulator must not prevent Knox or other
+      // devices from receiving the site load update.
+      await Promise.allSettled(
+        ["em500", "huawei", "solis", "sungrow", "knox"].map((key) =>
+          api.updateSimulatorDevice(key, { options: { loadKw } }),
+        ),
+      );
     } catch {
       // The simulators may not exist; the controller still works.
     }
