@@ -136,7 +136,7 @@ export function ZeroExportView({ devices, profiles, notify }) {
             api.getSimulatorValues("huawei").then((r) => r.data || []).catch(() => []),
             api.getSimulatorValues("solis").then((r) => r.data || []).catch(() => []),
             api.getSimulatorValues("sungrow").then((r) => r.data || []).catch(() => []),
-            api.getSimulatorValues("knox").then((r) => r.data || []).catch(() []),
+            api.getSimulatorValues("knox").then((r) => r.data || []).catch(() => []),
           ]);
           setSimValues({ em500, huawei, solis, sungrow, knox });
           failures = 0;
