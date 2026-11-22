@@ -63,10 +63,14 @@ class SimulatorController {
     // Validate port/unit collisions without shutting down a working TCP
     // simulator first. A stopped simulator still reserves its configured ID.
     const otherDevices = this.runtime.getStatus().devices || {};
+    const hostsOverlap = (left, right) =>
+      left === right ||
+      ['0.0.0.0', '::'].includes(left) ||
+      ['0.0.0.0', '::'].includes(right);
     const conflict = Object.entries(otherDevices).find(
       ([key, candidate]) =>
         key !== deviceKey &&
-        candidate.host === desired.host &&
+        hostsOverlap(candidate.host, desired.host) &&
         candidate.port === desired.port &&
         candidate.unitId === desired.unitId,
     );
