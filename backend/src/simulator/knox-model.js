@@ -54,7 +54,9 @@ function computeKnox(device) {
     protocol_version: '2.1.5',
     manufacturer_name: 'AISWEI',
     brand_name: 'KNOX',
-    inverter_model_code: 5,
+    // AISWEI V2.1.5 does not define a 110 kW enum for 31073;
+    // leave unclassified rather than falsely claiming 50–60 kW model (5).
+    inverter_model_code: 0,
     mppt_count: 4,
     string_count: 4,
     grid_rated_voltage: 230,
