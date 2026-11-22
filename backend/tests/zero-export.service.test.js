@@ -347,3 +347,23 @@ test('Knox failsafe writes raw 0 when meter stale', async () => {
   assert.equal(writes[0].value, 0);
   assert.equal(service.actions[0].outcome, 'FAILSAFE');
 });
+
+test('failed zero-export failsafe write retries and reports success only after acknowledged', async () => {
+  let attempts = 0;
+  const { service } = serviceWith({
+    meterValue: latest(600, 1000, 'W'),
+    writeHandler: () => {
+      attempts += 1;
+      if (attempts === 1) throw new Error('simulated TCP connection failure');
+    },
+  });
+  service.deratingRaw = 900;
+  for (let i = 0; i < 3; i += 1) await service.tick();
+  assert.equal(attempts, 1);
+  assert.equal(service.failsafeWritten, false);
+  assert.match(service.lastError.message, /Failsafe command failed/);
+  await service.tick();
+  assert.equal(attempts, 2);
+  assert.equal(service.failsafeWritten, true);
+  assert.equal(service.actions[0].outcome, 'FAILSAFE');
+});
