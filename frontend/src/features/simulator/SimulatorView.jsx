@@ -24,7 +24,7 @@ import { Field, Select, SwitchRow } from "@/components/common/FormControls";
 import { api } from "@/lib/api";
 import { formatValue } from "@/lib/formatters";
 
-const DEVICE_KEYS = ["em500", "huawei", "solis", "sungrow"];
+const DEVICE_KEYS = ["em500", "huawei", "solis", "sungrow", "knox"];
 
 const DEVICE_DEFAULTS = {
   em500: { label: "EM500 grid meter", port: "15020", unitId: "1", loadKw: "100" },
@@ -49,11 +49,18 @@ const DEVICE_DEFAULTS = {
     ratingKw: "100",
     availabilityPct: "80",
   },
+  knox: {
+    label: "Knox 110 kW inverter (AISWEI ASW GEN)",
+    port: "502",
+    unitId: "3",
+    ratingKw: "110",
+    availabilityPct: "80",
+  },
 };
 
 // Inverter simulator keys that expose a writable derating/power-limit
 // register in their profile.
-const DERATING_DEVICE_KEYS = ["huawei", "solis", "sungrow"];
+const DERATING_DEVICE_KEYS = ["huawei", "solis", "sungrow", "knox"];
 
 export function SimulatorView({ devices, profiles, notify, onForwardProfile }) {
   const [status, setStatus] = useState(null);
@@ -74,7 +81,7 @@ export function SimulatorView({ devices, profiles, notify, onForwardProfile }) {
       ]),
     ),
   );
-  const [values, setValues] = useState({ em500: [], huawei: [], solis: [], sungrow: [] });
+  const [values, setValues] = useState({ em500: [], huawei: [], solis: [], sungrow: [], knox: [] });
   const [working, setWorking] = useState("");
   const [error, setError] = useState("");
   const [deratingPct, setDeratingPct] = useState("100");
@@ -129,13 +136,17 @@ export function SimulatorView({ devices, profiles, notify, onForwardProfile }) {
       if (cancelled) return;
       if (!document.hidden) {
         try {
-          const [em500, huawei, solis, sungrow] = await Promise.all([
+          const [em500, huawei, solis, sungrow, knox] = await Promise.all([
             api.getSimulatorValues("em500"),
             api.getSimulatorValues("huawei"),
             api.getSimulatorValues("solis"),
             api.getSimulatorValues("sungrow"),
+            api.getSimulatorValues("knox"),
           ]);
-          setValues({ em500: em500.data || [], huawei: huawei.data || [], solis: solis.data || [], sungrow: sungrow.data || [] });
+          setValues({
+            em500: em500.data || [], huawei: huawei.data || [],
+            solis: solis.data || [], sungrow: sungrow.data || [], knox: knox.data || [],
+          });
           failures = 0;
         } catch {
           failures += 1;
@@ -168,12 +179,17 @@ export function SimulatorView({ devices, profiles, notify, onForwardProfile }) {
     () => profiles.find((profile) => profile.identifier === "sungrow-inverter"),
     [profiles],
   );
+  const knoxProfile = useMemo(
+    () => profiles.find((profile) => profile.identifier === "knox-asw110"),
+    [profiles],
+  );
   const simulatorDevices = useMemo(
     () => ({
       em500: devices.find((device) => device.identifier === "em500-simulator"),
       huawei: devices.find((device) => device.identifier === "huawei-simulator"),
       solis: devices.find((device) => device.identifier === "solis-simulator"),
       sungrow: devices.find((device) => device.identifier === "sungrow-simulator"),
+      knox: devices.find((device) => device.identifier === "knox-simulator"),
     }),
     [devices],
   );
@@ -210,7 +226,7 @@ export function SimulatorView({ devices, profiles, notify, onForwardProfile }) {
       unitId: Number(form.unitId),
       updateIntervalMs: Number(form.updateIntervalMs),
     };
-    if (deviceKey === "huawei" || deviceKey === "solis" || deviceKey === "sungrow") {
+    if (["huawei", "solis", "sungrow", "knox"].includes(deviceKey)) {
       payload.options = {
         ratingKw: Number(form.ratingKw),
         availabilityPct: Number(form.availabilityPct),
@@ -226,6 +242,9 @@ export function SimulatorView({ devices, profiles, notify, onForwardProfile }) {
         .catch(() => undefined);
       void api
         .updateSimulatorDevice("solis", { options: { loadKw } })
+        .catch(() => undefined);
+      void api
+        .updateSimulatorDevice("knox", { options: { loadKw } })
         .catch(() => undefined);
     }
     const maxReadQuantity = form.maxReadQuantity.trim();
@@ -264,6 +283,7 @@ export function SimulatorView({ devices, profiles, notify, onForwardProfile }) {
     if (!huaweiProfile) missing.push("Huawei profile (restore built-ins)");
     if (!solisProfile) missing.push("Solis profile (restore built-ins)");
     if (!sungrowProfile) missing.push("Sungrow profile (restore built-ins)");
+    if (!knoxProfile) missing.push("Knox ASW110 profile (restore built-ins)");
     if (missing.length > 0) {
       notify(`Missing: ${missing.join(", ")}`, "error");
       return;
@@ -273,6 +293,7 @@ export function SimulatorView({ devices, profiles, notify, onForwardProfile }) {
       const huaweiUnitId = Number(forms.huawei.unitId);
       const solisUnitId = Number(forms.solis.unitId);
       const sungrowUnitId = Number(forms.sungrow.unitId);
+      const knoxUnitId = Number(forms.knox.unitId);
       const created = [];
       if (!simulatorDevices.em500) {
         await api.createDevice({
@@ -330,6 +351,20 @@ export function SimulatorView({ devices, profiles, notify, onForwardProfile }) {
         });
         created.push("Sungrow inverter");
       }
+      if (!simulatorDevices.knox) {
+        await api.createDevice({
+          identifier: "knox-simulator",
+          name: "Knox 110 kW Simulator",
+          site: "Simulator",
+          unitId: knoxUnitId,
+          connection: { protocol: "TCP", host: "127.0.0.1", port: Number(forms.knox.port) },
+          registerProfileId: knoxProfile._id,
+          polling: { enabled: true, intervalMs: 5000, jitterMs: 1000 },
+          reconnect: { timeoutMs: 2000, retries: 1, retryDelayMs: 200 },
+          tags: ["simulator", "knox"],
+        });
+        created.push("Knox inverter");
+      }
       notify(
         created.length > 0
           ? `Simulator devices created and polling: ${created.join(", ")}.`
@@ -361,7 +396,7 @@ export function SimulatorView({ devices, profiles, notify, onForwardProfile }) {
         (item) =>
           item.writable &&
           item.registerType === "HOLDING_REGISTER" &&
-          /derating|power.?limit|limit/i.test(item.key),
+          /derating|power.?limit|limit|active_power_set/i.test(item.key),
       );
       if (register) {
         targets.push({
@@ -628,9 +663,11 @@ export function SimulatorView({ devices, profiles, notify, onForwardProfile }) {
                       <FlaskConical className="h-4 w-4" /> {defaults.label}
                     </CardTitle>
                     <CardDescription>
-                      {key === "huawei"
-                        ? "Holding registers (FC03) plus writable derating (FC06/FC16)."
-                        : "Input registers (FC04) with the EM500 map."}
+                      {key === "knox"
+                        ? "AISWEI V2.1.5: FC04 telemetry, FC03/FC06 control; 45403 (wire 5402) = 0.01%."
+                        : key === "huawei"
+                          ? "Holding registers (FC03) plus writable derating (FC06/FC16)."
+                          : "Modbus input registers (FC04) with writable control where supported."}
                     </CardDescription>
                   </div>
                   <Badge className={running ? "bg-emerald-600 text-white" : "bg-slate-500 text-white"}>
@@ -645,7 +682,7 @@ export function SimulatorView({ devices, profiles, notify, onForwardProfile }) {
                   </span>
                   <span>·</span>
                   <span>Unit {deviceStatus?.unitId ?? form.unitId}</span>
-                  {(key === "huawei" || key === "solis" || key === "sungrow") && (
+                  {(["huawei", "solis", "sungrow", "knox"].includes(key)) && (
                     <>
                       <span>·</span>
                       <span>
@@ -670,7 +707,7 @@ export function SimulatorView({ devices, profiles, notify, onForwardProfile }) {
                       onChange={(event) => setField(key, "unitId", event.target.value)}
                     />
                   </Field>
-                  <Field label="TCP port">
+                  <Field label="TCP port" hint={key === "knox" ? "Default 502. On Linux, binding a port below 1024 may need CAP_NET_BIND_SERVICE." : undefined}>
                     <Input
                       type="number"
                       min="1"
@@ -688,7 +725,7 @@ export function SimulatorView({ devices, profiles, notify, onForwardProfile }) {
                       onChange={(event) => setField(key, "updateIntervalMs", event.target.value)}
                     />
                   </Field>
-                  {(key === "huawei" || key === "solis" || key === "sungrow") && (
+                  {(["huawei", "solis", "sungrow", "knox"].includes(key)) && (
                     <>
                       <Field label="Solar rating (kW)">
                         <Input
@@ -783,7 +820,9 @@ export function SimulatorView({ devices, profiles, notify, onForwardProfile }) {
                             ? huaweiProfile
                             : key === "solis"
                               ? solisProfile
-                              : sungrowProfile,
+                              : key === "knox"
+                                ? knoxProfile
+                                : sungrowProfile,
                       )
                     }
                     disabled={!deviceRef || Boolean(working)}
