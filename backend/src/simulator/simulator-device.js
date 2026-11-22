@@ -249,10 +249,15 @@ class SimulatorDevice {
   }
 
   configure(patch) {
-    if (this.state === SIMULATOR_STATES.RUNNING || this.state === SIMULATOR_STATES.STARTING) {
-      throw new Error('Stop the simulator before changing its configuration.');
-    }
     const { options, ...rest } = patch;
+    // Adjusting irradiance/load while the simulator runs must not drop the
+    // Modbus TCP socket. Only transport/interval settings require a restart.
+    if (
+      (this.state === SIMULATOR_STATES.RUNNING || this.state === SIMULATOR_STATES.STARTING) &&
+      Object.keys(rest).length > 0
+    ) {
+      throw new Error('Stop the simulator before changing its network configuration.');
+    }
     this.configuration = {
       ...this.configuration,
       ...rest,
