@@ -1,8 +1,5 @@
 name: Knox simulator Mac E2E
 on:
-  push:
-    branches:
-      - feat/knox-asw110-simulator-502-20261122
   pull_request:
     branches:
       - arena/019fbcfb-zero-export
@@ -23,6 +20,8 @@ jobs:
     steps:
       - name: Checkout exact commit
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Node.js runtime
         shell: bash
         run: |
