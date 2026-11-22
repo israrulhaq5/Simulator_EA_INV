@@ -109,3 +109,38 @@ test('remote switch and active power control commands update simulated productio
   sim.tick();
   assert.equal(sim.values.get('active_power').value, 88000);
 });
+
+test('real TCP master reads Knox FC04 and writes FC06 power limit', async () => {
+  const net = require('node:net');
+  const ModbusRTU = require('modbus-serial');
+  const server = net.createServer();
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  const port = server.address().port;
+  await new Promise(resolve => server.close(resolve));
+
+  // Test on a free high port: port 502 is a deployment default, not
+  // required for test runners that do not have elevated bind permissions.
+  const sim = knox();
+  sim.configure({ host: '127.0.0.1', port });
+  const client = new ModbusRTU();
+  try {
+    await sim.start();
+    await client.connectTCP('127.0.0.1', { port });
+    client.setID(3);
+    client.setTimeout(3000);
+
+    const powerBefore = await client.readInputRegisters(1370, 2);
+    assert.deepEqual(powerBefore.data, [1, 22464]); // 88000W
+
+    await client.writeRegister(5402, 5000);
+    sim.tick();
+    const limitReadback = await client.readHoldingRegisters(5402, 1);
+    assert.deepEqual(limitReadback.data, [5000]);
+
+    const powerAfter = await client.readInputRegisters(1370, 2);
+    assert.deepEqual(powerAfter.data, [0, 44000]); // 44000W
+  } finally {
+    await new Promise(resolve => client.isOpen ? client.close(resolve) : resolve());
+    await sim.stop();
+  }
+});
