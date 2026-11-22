@@ -80,10 +80,19 @@ class SimulatorController {
     await this.settingsRepository.save(deviceKey, desired);
 
     const wasRunning = previous.state === 'RUNNING';
+    const requiresRestart = ['host', 'port', 'unitId', 'updateIntervalMs'].some(
+      (key) => desired[key] !== previousSettings[key],
+    );
     try {
-      await stopDevice(deviceKey);
-      device.configure(body);
-      if (wasRunning) await startDevice(deviceKey);
+      if (requiresRestart) {
+        await stopDevice(deviceKey);
+        device.configure(body);
+        if (wasRunning) await startDevice(deviceKey);
+      } else {
+        // Options-only changes are live: don't close port 502 or break a
+        // zero-export controller currently polling the inverter.
+        device.configure({ options: body.options || {} });
+      }
     } catch (error) {
       // Restore the last known-good listener/configuration and saved settings.
       // Preserve the root failure if recovery also fails.
