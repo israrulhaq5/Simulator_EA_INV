@@ -64,14 +64,14 @@ async function assertPower(client, expectedWatts, message) {
   buffer.writeUInt16BE(data[1], 2);
   const actualWatts = buffer.readInt32BE(0);
   assert.equal(actualWatts, expectedWatts, message);
-  console.log('PASS ' + message + ' (' + actualWatts + ' W)');
+  process.stdout.write('PASS ' + message + ' (' + actualWatts + ' W)' + '\n');
 }
 
 async function main() {
   const simulator = makeSimulator();
   let client;
-  console.log('Knox localhost-only Modbus TCP acceptance test');
-  console.log('No physical inverter will be contacted. Test address: ' + HOST + ':' + FIRST_PORT);
+  process.stdout.write('Knox localhost-only Modbus TCP acceptance test' + '\n');
+  process.stdout.write('No physical inverter will be contacted. Test address: ' + HOST + ':' + FIRST_PORT + '\n');
   try {
     try {
       await simulator.start();
@@ -85,18 +85,18 @@ async function main() {
       throw error;
     }
     assert.equal(simulator.getStatus().state, 'RUNNING');
-    console.log('PASS Modbus TCP server started on ' + HOST + ':' + FIRST_PORT + ', Slave ID ' + FIRST_ID);
+    process.stdout.write('PASS Modbus TCP server started on ' + HOST + ':' + FIRST_PORT + ', Slave ID ' + FIRST_ID + '\n');
     client = await openClient(FIRST_PORT, FIRST_ID);
 
     assert.deepEqual((await client.readInputRegisters(1001, 1)).data, [FIRST_ID]);
-    console.log('PASS FC04: configured Slave ID register');
+    process.stdout.write('PASS FC04: configured Slave ID register' + '\n');
 
     await assertPower(client, 88000, 'FC04: 110 kW rated at 80% availability');
 
     await client.writeRegister(5402, 5000);
     simulator.tick();
     assert.deepEqual((await client.readHoldingRegisters(5402, 1)).data, [5000]);
-    console.log('PASS FC06 write + FC03 readback: 5000 raw = 50.00%');
+    process.stdout.write('PASS FC06 write + FC03 readback: 5000 raw = 50.00%' + '\n');
     await assertPower(client, 44000, 'FC04 power follows 50% setpoint');
 
     await client.writeRegister(200, 0);
@@ -115,12 +115,12 @@ async function main() {
     await simulator.start();
     client = await openClient(secondPort, SECOND_ID);
     assert.deepEqual((await client.readInputRegisters(1001, 1)).data, [SECOND_ID]);
-    console.log('PASS editable port ' + secondPort + ' and Slave ID ' + SECOND_ID);
+    process.stdout.write('PASS editable port ' + secondPort + ' and Slave ID ' + SECOND_ID + '\n');
     await client.writeRegister(5402, 2500);
     simulator.tick();
     await assertPower(client, 22000, 'FC06 25% command works after changing port and ID');
 
-    console.log('PASS: localhost Modbus TCP acceptance complete.');
+    process.stdout.write('PASS: localhost Modbus TCP acceptance complete.' + '\n');
   } finally {
     await closeClient(client);
     await simulator.stop();
@@ -128,6 +128,6 @@ async function main() {
 }
 
 main().catch((error) => {
-  console.error('FAIL Knox TCP acceptance: ' + (error.stack || error.message));
+  process.stderr.write('FAIL Knox TCP acceptance: ' + (error.stack || error.message) + '\n');
   process.exitCode = 1;
 });
