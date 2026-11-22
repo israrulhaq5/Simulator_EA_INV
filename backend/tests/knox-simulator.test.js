@@ -144,3 +144,54 @@ test('real TCP master reads Knox FC04 and writes FC06 power limit', async () => 
     await sim.stop();
   }
 });
+
+test('port/ID conflict is rejected before persistence or interrupting an existing slave', async () => {
+  const { getStatus, getDevice, stopDevice } = require('../src/simulator');
+  const SimulatorController = require('../src/controllers/simulator.controller');
+  await stopDevice('knox');
+  const sim = getDevice('knox');
+  const before = sim.getStatus();
+  let saved = 0;
+  const controller = new SimulatorController(
+    { getStatus, getDevice, getValues: () => [] },
+    { save: async () => { saved += 1; } },
+    { findOne: async () => null },
+  );
+  // Solis has port 15022 / unit 3; Knox must not duplicate it.
+  await assert.rejects(
+    controller.updateDevice({
+      validated: {
+        params: { deviceKey: 'knox' },
+        body: { port: 15022, unitId: 3 },
+      },
+    }, {}),
+    error => error.statusCode === 422,
+  );
+  assert.equal(saved, 0);
+  assert.equal(sim.getStatus().port, before.port);
+  assert.equal(sim.getStatus().unitId, before.unitId);
+});
+
+test('persistence failure leaves Knox TCP port and ID unchanged', async () => {
+  const { getStatus, getDevice, stopDevice } = require('../src/simulator');
+  const SimulatorController = require('../src/controllers/simulator.controller');
+  await stopDevice('knox');
+  const sim = getDevice('knox');
+  const before = sim.getStatus();
+  const controller = new SimulatorController(
+    { getStatus, getDevice, getValues: () => [] },
+    { save: async () => { throw new Error('simulated MongoDB unavailable'); } },
+    { findOne: async () => null },
+  );
+  await assert.rejects(
+    controller.updateDevice({
+      validated: {
+        params: { deviceKey: 'knox' },
+        body: { port: 16025, unitId: 23 },
+      },
+    }, {}),
+    /simulated MongoDB unavailable/,
+  );
+  assert.equal(sim.getStatus().port, before.port);
+  assert.equal(sim.getStatus().unitId, before.unitId);
+});
