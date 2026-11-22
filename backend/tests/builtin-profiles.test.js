@@ -283,7 +283,7 @@ test('built-in profile seed skips identifiers that already exist at the current 
   const results = await seedBuiltinProfiles(repository);
   assert.deepEqual(
     results.map((result) => result.action),
-    ['SKIPPED', 'SKIPPED', 'SKIPPED', 'SKIPPED'],
+    ['SKIPPED', 'SKIPPED', 'SKIPPED', 'SKIPPED', 'SKIPPED'],
   );
 });
 
@@ -309,7 +309,7 @@ test('built-in profile seed upgrades stale built-in profiles to the shipped vers
   // All four built-ins ship above version 1, so stale v1 built-ins upgrade.
   assert.deepEqual(
     results.map((result) => result.action),
-    ['UPDATED', 'UPDATED', 'UPDATED', 'UPDATED'],
+    ['UPDATED', 'UPDATED', 'UPDATED', 'UPDATED', 'UPDATED'],
   );
 
   const em500Upgrade = updated.find((profile) => profile.identifier === 'em500');
@@ -340,7 +340,7 @@ test('built-in profile seed never touches operator-created profiles', async () =
   const results = await seedBuiltinProfiles(repository);
   assert.deepEqual(
     results.map((result) => result.action),
-    ['SKIPPED', 'SKIPPED', 'SKIPPED', 'SKIPPED'],
+    ['SKIPPED', 'SKIPPED', 'SKIPPED', 'SKIPPED', 'SKIPPED'],
   );
 });
 
@@ -358,9 +358,9 @@ test('RegisterProfileService.restoreBuiltIns recreates deleted built-in profiles
   });
 
   const result = await service.restoreBuiltIns();
-  assert.deepEqual(result.restored, ['em500', 'huawei-sun2000', 'solis-inverter', 'sungrow-inverter']);
+  assert.deepEqual(result.restored, ['em500', 'huawei-sun2000', 'solis-inverter', 'sungrow-inverter', 'knox-asw110']);
   assert.deepEqual(result.alreadyPresent, []);
-  assert.equal(result.total, 4);
+  assert.equal(result.total, 5);
   assert.ok(created.every((profile) => profile.builtIn === true));
 });
 
@@ -388,12 +388,12 @@ test('RegisterProfileService.restoreBuiltIns reports profiles that already exist
   });
 
   const result = await service.restoreBuiltIns();
-  assert.deepEqual(result.restored, ['huawei-sun2000', 'solis-inverter', 'sungrow-inverter']);
+  assert.deepEqual(result.restored, ['huawei-sun2000', 'solis-inverter', 'sungrow-inverter', 'knox-asw110']);
   assert.deepEqual(result.alreadyPresent, ['em500']);
-  assert.equal(result.total, 4);
+  assert.equal(result.total, 5);
   assert.deepEqual(
     created.map((profile) => profile.identifier),
-    ['huawei-sun2000', 'solis-inverter', 'sungrow-inverter'],
+    ['huawei-sun2000', 'solis-inverter', 'sungrow-inverter', 'knox-asw110'],
   );
 });
 

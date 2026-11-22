@@ -303,3 +303,67 @@ test('zero-export configuration schema validates and cross-checks derating limit
     (error) => error.name === 'ZodError',
   );
 });
+
+test('zero-export converts normalized 78% into Knox 45403 raw 7800', async () => {
+  const { service, writes } = serviceWith({ meterValue: latest(1, -5000, 'W') });
+  service.configurationRepository.getOrDefault = async () =>
+    configuration({
+      inverterRegisterAddress: 5402,
+      inverterRegisterScaleFactor: 0.01,
+    });
+  service.deratingRaw = 800; // 80% prior normalized limit
+  await service.tick();
+  assert.equal(writes.length, 1);
+  assert.equal(writes[0].address, 5402);
+  assert.equal(writes[0].value, 7800);
+  assert.equal(service.getStatus().lastDeratingPercent, 78);
+});
+
+test('zero-export simulation converts Knox inverter watts to kW before calculating grid', async () => {
+  const { service, writes } = serviceWith({ inverterValue: latest(1, 70000, 'W') });
+  service.configurationRepository.getOrDefault = async () =>
+    configuration({
+      simulation: { enabled: true, loadKw: 100 },
+      inverterRegisterAddress: 5402,
+      inverterRegisterScaleFactor: 0.01,
+    });
+  service.deratingRaw = 500;
+  await service.tick();
+  assert.equal(service.lastGridKw, 30);
+  assert.equal(writes[0].value, 5200);
+});
+
+test('Knox failsafe writes raw 0 when meter stale', async () => {
+  const { service, writes } = serviceWith({ meterValue: latest(600, -5000, 'W') });
+  service.configurationRepository.getOrDefault = async () =>
+    configuration({
+      inverterRegisterAddress: 5402,
+      inverterRegisterScaleFactor: 0.01,
+    });
+  service.deratingRaw = 600;
+  for (let i = 0; i < 3; i += 1) await service.tick();
+  assert.equal(writes.length, 1);
+  assert.equal(writes[0].address, 5402);
+  assert.equal(writes[0].value, 0);
+  assert.equal(service.actions[0].outcome, 'FAILSAFE');
+});
+
+test('failed zero-export failsafe write retries and reports success only after acknowledged', async () => {
+  let attempts = 0;
+  const { service } = serviceWith({
+    meterValue: latest(600, 1000, 'W'),
+    writeHandler: () => {
+      attempts += 1;
+      if (attempts === 1) throw new Error('simulated TCP connection failure');
+    },
+  });
+  service.deratingRaw = 900;
+  for (let i = 0; i < 3; i += 1) await service.tick();
+  assert.equal(attempts, 1);
+  assert.equal(service.failsafeWritten, false);
+  assert.match(service.lastError.message, /Failsafe command failed/);
+  await service.tick();
+  assert.equal(attempts, 2);
+  assert.equal(service.failsafeWritten, true);
+  assert.equal(service.actions[0].outcome, 'FAILSAFE');
+});

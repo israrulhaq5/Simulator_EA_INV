@@ -6,6 +6,7 @@ const { EM500_PROFILE } = require('../seed/em500.profile');
 const { HUAWEI_SUN2000_PROFILE } = require('../seed/huawei-sun2000.profile');
 const { SOLIS_PROFILE } = require('../seed/solis-inverter.profile');
 const { SUNGROW_PROFILE } = require('../seed/sungrow-inverter.profile');
+const { KNOX_ASW110_PROFILE } = require('../seed/knox-asw110.profile');
 
 /**
  * Simulator farm: one or more Modbus TCP slaves.
@@ -79,6 +80,15 @@ const simulatorDevices = Object.freeze({
       },
     },
   }),
+  knox: new SimulatorDevice({
+    key: 'knox',
+    deviceType: 'Knox 110 kW inverter',
+    profile: KNOX_ASW110_PROFILE,
+    defaultConfiguration: {
+      host: '0.0.0.0', port: 502, unitId: 3, updateIntervalMs: 1000,
+      options: { ratingKw: 110, availabilityPct: 80, loadKw: 100 },
+    },
+  }),
 });
 
 // host:port -> { server, devices: Set }
@@ -144,11 +154,9 @@ function closeSharedServer(key) {
 async function startSharedGroup(devices) {
   if (devices.length === 0) return;
 
-  // Release any self-owned servers first.
-  await Promise.all(devices.map((device) => device.stop()));
-
   const key = portKeyOf(devices[0]);
 
+  // Validate collisions BEFORE stopping any live group.
   // Unit IDs must be unique within a shared port.
   const units = new Set();
   for (const device of devices) {
@@ -161,6 +169,8 @@ async function startSharedGroup(devices) {
     units.add(unitId);
   }
 
+  // Only after validation, release and recreate the socket group.
+  await Promise.all(devices.map((device) => device.stop()));
   await closeSharedServer(key);
 
   const vector = buildSharedVector(devices);
@@ -189,7 +199,7 @@ async function startAll() {
   }
   // Start the inverters before the meter so the coupled meter's first tick
   // already sees every inverter's output (grid = load - inverters).
-  const order = ['huawei', 'solis', 'sungrow', 'em500'];
+  const order = ['huawei', 'solis', 'sungrow', 'knox', 'em500'];
   const orderedGroups = [];
   for (const key of order) {
     const groupKey = portKeyOf(simulatorDevices[key]);
@@ -198,7 +208,16 @@ async function startAll() {
     }
   }
   for (const groupKey of orderedGroups) {
-    await startSharedGroup(groups.get(groupKey));
+    try {
+      await startSharedGroup(groups.get(groupKey));
+    } catch (error) {
+      // Port 502 may require privileges. A bind failure on Knox alone
+      // must not interrupt the other independently running simulators.
+      const group = groups.get(groupKey);
+      if (group.length !== 1 || group[0].key !== 'knox') throw error;
+      group[0].state = 'ERROR';
+      group[0].lastError = { message: error.message, occurredAt: new Date() };
+    }
   }
   return getStatus();
 }
