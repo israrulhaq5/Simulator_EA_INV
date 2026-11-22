@@ -91,7 +91,8 @@ function computeKnox(device) {
     grid_frequency: model.frequency,
     apparent_power: outputKw * 1000 / pf,
     active_power: outputKw * 1000,
-    reactive_power: outputKw * 1000 * 0.04,
+    // Keep P, Q, S and PF mathematically coherent in the telemetry.
+    reactive_power: outputKw * 1000 * Math.tan(Math.acos(pf)),
     power_factor: pf,
     inverter_fault_state: 0,
     inverter_error_code: 0,
