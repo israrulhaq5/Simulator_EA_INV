@@ -75,9 +75,16 @@ internal normalized percentage.
 - Committed unit regression tests:
   `backend/tests/knox-simulator.test.js` and additions to
   `backend/tests/zero-export.service.test.js`
-- Full `npm run check`, Vite build, real Modbus TCP master test and site
-  commissioning **must still be run** in the connected Node/Mongo environment.
-  Do not mark these tests as passed without their execution logs.
+- No GitHub Actions or CI is required by this feature branch. The previous
+  Knox CI workflow was removed at the owner's request.
+- Dependency-isolated JavaScript execution has checked register readback,
+  0.01% active-power derating, live options, editable port and ID,
+  database failure preservation, port-conflict precheck, failed-bind rollback,
+  and zero-export stale-reading failsafe retry.
+- A complete `npm run check`, Vite build, real Modbus TCP master test
+  using the installed `modbus-serial` package, and a MongoDB-backed API/browser
+  session have **not** been executed in this environment. These are runtime
+  acceptance checks, not CI requirements. Do not claim they passed.
 
 Suggested local checks:
 ```sh
