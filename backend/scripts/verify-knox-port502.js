@@ -91,7 +91,7 @@ async function main() {
     assert.deepEqual((await client.readInputRegisters(1001, 1)).data, [FIRST_ID]);
     console.log('PASS FC04: configured Slave ID register');
 
-    assertPower(client, 88000, 'FC04: 110 kW rated at 80% availability');
+    await assertPower(client, 88000, 'FC04: 110 kW rated at 80% availability');
 
     await client.writeRegister(5402, 5000);
     simulator.tick();
