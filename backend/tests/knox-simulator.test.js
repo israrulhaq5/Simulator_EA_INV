@@ -195,3 +195,43 @@ test('persistence failure leaves Knox TCP port and ID unchanged', async () => {
   assert.equal(sim.getStatus().port, before.port);
   assert.equal(sim.getStatus().unitId, before.unitId);
 });
+
+test('Knox solar availability can change live without stopping its TCP server', () => {
+  const sim = knox();
+  sim.state = 'RUNNING';
+  const before = sim.getStatus();
+  sim.configure({ options: { availabilityPct: 35 } });
+  assert.equal(sim.getStatus().state, 'RUNNING');
+  assert.equal(sim.getStatus().port, before.port);
+  sim.tick();
+  assert.equal(sim.values.get('active_power').value, 38500);
+  assert.throws(() => sim.configure({ unitId: 42 }), /Stop the simulator/);
+});
+
+test('real Modbus TCP master can connect on an edited port and unit ID', async () => {
+  const net = require('node:net');
+  const ModbusRTU = require('modbus-serial');
+  const reservation = net.createServer();
+  await new Promise(resolve => reservation.listen(0, '127.0.0.1', resolve));
+  const newPort = reservation.address().port;
+  await new Promise(resolve => reservation.close(resolve));
+
+  const sim = knox();
+  sim.configure({ host: '127.0.0.1', port: newPort, unitId: 17 });
+  const client = new ModbusRTU();
+  try {
+    await sim.start();
+    await client.connectTCP('127.0.0.1', { port: newPort });
+    client.setID(17);
+    client.setTimeout(3000);
+    const id = await client.readInputRegisters(1001, 1);
+    assert.deepEqual(id.data, [17]);
+    await client.writeRegister(5402, 2500);
+    sim.tick();
+    const power = await client.readInputRegisters(1370, 2);
+    assert.deepEqual(power.data, [0, 22000]); // 110kW * 80% * 25%
+  } finally {
+    await new Promise(resolve => client.isOpen ? client.close(resolve) : resolve());
+    await sim.stop();
+  }
+});
