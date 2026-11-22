@@ -154,11 +154,9 @@ function closeSharedServer(key) {
 async function startSharedGroup(devices) {
   if (devices.length === 0) return;
 
-  // Release any self-owned servers first.
-  await Promise.all(devices.map((device) => device.stop()));
-
   const key = portKeyOf(devices[0]);
 
+  // Validate collisions BEFORE stopping any live group.
   // Unit IDs must be unique within a shared port.
   const units = new Set();
   for (const device of devices) {
@@ -171,6 +169,8 @@ async function startSharedGroup(devices) {
     units.add(unitId);
   }
 
+  // Only after validation, release and recreate the socket group.
+  await Promise.all(devices.map((device) => device.stop()));
   await closeSharedServer(key);
 
   const vector = buildSharedVector(devices);
