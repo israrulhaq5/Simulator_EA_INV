@@ -10,6 +10,9 @@ const {
 const SimulatorSettingsRepository = require('../repositories/simulator-settings.repository');
 const DeviceRepository = require('../repositories/device.repository');
 const { sendSuccess } = require('../utils/api-response');
+const AppError = require('../utils/app-error');
+const HTTP_STATUS = require('../constants/http-status');
+const ERROR_CODES = require('../constants/error-codes');
 
 class SimulatorController {
   constructor(
@@ -68,12 +71,14 @@ class SimulatorController {
         candidate.unitId === desired.unitId,
     );
     if (conflict) {
-      const error = new Error(
+      throw new AppError(
         `Port ${desired.port} / Unit ID ${desired.unitId} is already assigned to ${conflict[0]}.`,
+        {
+          statusCode: HTTP_STATUS.UNPROCESSABLE_ENTITY,
+          code: ERROR_CODES.VALIDATION_ERROR,
+          details: [{ field: 'unitId', message: 'Duplicate Modbus port/unit ID.' }],
+        },
       );
-      error.statusCode = 422;
-      error.code = 'SIMULATOR_UNIT_ID_CONFLICT';
-      throw error;
     }
 
     // A save that fails must not appear successful or change live state.
@@ -126,11 +131,10 @@ class SimulatorController {
       if (Object.keys(patch).length > 0) {
         const updated = await this.deviceRepository.updateById(linked._id, patch);
         if (!updated) {
-          const error = new Error(
-            `Simulator settings were saved, but linked EMS device ${deviceKey}-simulator could not be updated.`,
+          throw new AppError(
+            `Simulator settings saved but linked EMS device ${deviceKey}-simulator could not be synchronized.`,
+            { statusCode: HTTP_STATUS.INTERNAL_SERVER_ERROR, code: ERROR_CODES.INTERNAL_ERROR },
           );
-          error.statusCode = 503;
-          throw error;
         }
         syncedDevice = { _id: String(updated._id), identifier: updated.identifier };
       }
