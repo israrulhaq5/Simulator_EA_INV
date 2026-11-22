@@ -385,12 +385,17 @@ class ZeroExportService {
     ) {
       try {
         await this.writeFailsafe(configuration);
+        // Retry on a subsequent stale cycle if the write was not accepted.
+        this.failsafeWritten = true;
       } catch (error) {
+        this.lastError = {
+          message: 'Failsafe command failed: ' + String(error.message).slice(0, 450),
+          occurredAt: new Date(),
+        };
         this.logger.error('Zero-export failsafe write failed', {
           error: error.stack || error.message,
         });
       }
-      this.failsafeWritten = true;
     }
   }
 
@@ -406,7 +411,7 @@ class ZeroExportService {
   async writeFailsafe(configuration) {
     const inverterDevice = await this.deviceRepository.findById(configuration.inverterDeviceId);
     if (!inverterDevice) {
-      return;
+      throw new Error('Failsafe inverter device is unavailable.');
     }
     await this.connectionManager.execute(inverterDevice, 'zero-export', async (client) => {
       await client.writeRegister(
