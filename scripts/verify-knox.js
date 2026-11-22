@@ -17,6 +17,7 @@ const { spawn } = require('node:child_process');
 const ROOT = path.resolve(__dirname, '..');
 const LOG = path.join(ROOT, 'knox-verification.log');
 const skipPort502 = process.argv.includes('--skip-port502');
+const skipInstall = process.argv.includes('--skip-install');
 const log = fs.createWriteStream(LOG, { encoding: 'utf8', flags: 'w' });
 
 function output(value) {
@@ -80,6 +81,10 @@ async function main() {
   }
 
   for (const [name, cmd, args] of steps) {
+    if (skipInstall && name.startsWith('Install locked ')) {
+      output('SKIP ' + name + ': dependencies already installed locally.\n');
+      continue;
+    }
     if (!(await run(name, cmd, args))) {
       output('\nRESULT: FAIL. Fix the step above; share knox-verification.log.\n');
       process.exitCode = 1;
