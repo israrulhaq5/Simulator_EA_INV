@@ -57,6 +57,11 @@ test('Knox defaults port 502/unit 3 and serves 110 kW rated register', () => {
   assert.equal(sim.read(REGISTER_TYPES.INPUT, 1370, 3), 1);
   // 88 kW at 80% availability (32-bit big endian: high word = 1, low = 22464).
   assert.equal(sim.values.get('active_power').value, 88000);
+  const p = sim.values.get('active_power').value;
+  const q = sim.values.get('reactive_power').value;
+  const s = sim.values.get('apparent_power').value;
+  assert.ok(Math.abs(Math.sqrt(p * p + q * q) - s) < 5, 'P/Q/S should be internally consistent');
+  assert.equal(sim.values.get('power_factor').value, 0.99);
 });
 
 test('FC06 at wire 5402 derates Knox from 88 kW to 44 kW and reads back 50%', () => {
