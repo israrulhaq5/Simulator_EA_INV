@@ -235,3 +235,44 @@ test('real Modbus TCP master can connect on an edited port and unit ID', async (
     await sim.stop();
   }
 });
+
+test('running Knox keeps the same TCP server when irradiance changes through API', async () => {
+  const net = require('node:net');
+  const { getStatus, getDevice, startDevice, stopDevice } = require('../src/simulator');
+  const SimulatorController = require('../src/controllers/simulator.controller');
+  const portProbe = net.createServer();
+  await new Promise(resolve => portProbe.listen(0, '127.0.0.1', resolve));
+  const port = portProbe.address().port;
+  await new Promise(resolve => portProbe.close(resolve));
+
+  const sim = getDevice('knox');
+  await stopDevice('knox');
+  sim.configure({ host: '127.0.0.1', port, unitId: 3 });
+  const res = { status: () => res, json: payload => payload };
+  const controller = new SimulatorController(
+    { getStatus, getDevice, getValues: () => [] },
+    { save: async () => undefined },
+    { findOne: async () => null },
+  );
+  try {
+    await startDevice('knox');
+    const listener = sim.server;
+    assert.equal(sim.getStatus().state, 'RUNNING');
+    await controller.updateDevice({
+      validated: {
+        params: { deviceKey: 'knox' },
+        body: { options: { availabilityPct: 35 } },
+      },
+    }, res);
+    assert.equal(sim.server, listener, 'live load changes must not restart port 502');
+    assert.equal(sim.getStatus().state, 'RUNNING');
+    sim.tick();
+    assert.equal(sim.values.get('active_power').value, 38500);
+  } finally {
+    await stopDevice('knox');
+    sim.configure({
+      host: '0.0.0.0', port: 502, unitId: 3,
+      options: { availabilityPct: 80, ratingKw: 110, loadKw: 100 },
+    });
+  }
+});
