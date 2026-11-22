@@ -43,49 +43,90 @@ class SimulatorController {
     const deviceKey = req.validated.params.deviceKey;
     const body = req.validated.body;
     const device = this.runtime.getDevice(deviceKey);
-    const wasRunning = device.getStatus().state === 'RUNNING';
-    await stopDevice(deviceKey);
-    device.configure(body);
+    const previous = device.getStatus();
+    const previousSettings = {
+      host: previous.host,
+      port: previous.port,
+      unitId: previous.unitId,
+      updateIntervalMs: previous.updateIntervalMs,
+      options: { ...previous.options },
+    };
+    const desired = {
+      ...previousSettings,
+      ...body,
+      options: { ...previousSettings.options, ...(body.options || {}) },
+    };
 
-    // Persist the settings so they survive a backend restart.
-    try {
-      await this.settingsRepository.save(deviceKey, body);
-    } catch (error) {
-      // Persistence failure should not break the live configuration.
-      this.runtime.logger?.warn?.(`Unable to persist simulator settings for ${deviceKey}`, error?.message);
+    // Validate port/unit collisions without shutting down a working TCP
+    // simulator first. A stopped simulator still reserves its configured ID.
+    const otherDevices = this.runtime.getStatus().devices || {};
+    const conflict = Object.entries(otherDevices).find(
+      ([key, candidate]) =>
+        key !== deviceKey &&
+        candidate.host === desired.host &&
+        candidate.port === desired.port &&
+        candidate.unitId === desired.unitId,
+    );
+    if (conflict) {
+      const error = new Error(
+        `Port ${desired.port} / Unit ID ${desired.unitId} is already assigned to ${conflict[0]}.`,
+      );
+      error.statusCode = 422;
+      error.code = 'SIMULATOR_UNIT_ID_CONFLICT';
+      throw error;
     }
 
-    // Keep the linked EMS device in sync so polling keeps working with the
-    // new unit ID / port. The linked device is named <key>-simulator.
-    let syncedDevice = null;
+    // A save that fails must not appear successful or change live state.
+    await this.settingsRepository.save(deviceKey, desired);
+
+    const wasRunning = previous.state === 'RUNNING';
     try {
-      const linked = await this.deviceRepository.findOne({
-        identifier: `${deviceKey}-simulator`,
-      });
-      if (linked) {
-        const patch = {};
-        if (body.unitId !== undefined) patch.unitId = body.unitId;
-        if (body.port !== undefined) {
-          patch.connection = {
-            protocol: linked.connection?.protocol || 'TCP',
-            host: linked.connection?.host || '127.0.0.1',
-            port: body.port,
-          };
-        }
-        if (Object.keys(patch).length > 0) {
-          const updated = await this.deviceRepository.updateById(linked._id, patch);
-          syncedDevice = updated
-            ? { _id: String(updated._id), identifier: updated.identifier }
-            : null;
-        }
+      await stopDevice(deviceKey);
+      device.configure(body);
+      if (wasRunning) await startDevice(deviceKey);
+    } catch (error) {
+      // Restore the last known-good listener/configuration and saved settings.
+      // Preserve the root failure if recovery also fails.
+      try {
+        await stopDevice(deviceKey);
+        device.configure(previousSettings);
+        await this.settingsRepository.save(deviceKey, previousSettings);
+        if (wasRunning) await startDevice(deviceKey);
+      } catch (recoveryError) {
+        error.message += ` (rollback failed: ${recoveryError.message})`;
       }
-    } catch (error) {
-      this.runtime.logger?.warn?.(`Unable to sync simulator device ${deviceKey}`, error?.message);
+      throw error;
     }
 
-    if (wasRunning) {
-      await startDevice(deviceKey);
+    // Keep the linked EMS polling device aligned with the editable server.
+    // Do not silently claim synchronization when the database update fails.
+    let syncedDevice = null;
+    const linked = await this.deviceRepository.findOne({
+      identifier: `${deviceKey}-simulator`,
+    });
+    if (linked) {
+      const patch = {};
+      if (body.unitId !== undefined) patch.unitId = desired.unitId;
+      if (body.port !== undefined) {
+        patch.connection = {
+          protocol: linked.connection?.protocol || 'TCP',
+          host: linked.connection?.host || '127.0.0.1',
+          port: desired.port,
+        };
+      }
+      if (Object.keys(patch).length > 0) {
+        const updated = await this.deviceRepository.updateById(linked._id, patch);
+        if (!updated) {
+          const error = new Error(
+            `Simulator settings were saved, but linked EMS device ${deviceKey}-simulator could not be updated.`,
+          );
+          error.statusCode = 503;
+          throw error;
+        }
+        syncedDevice = { _id: String(updated._id), identifier: updated.identifier };
+      }
     }
+
     return sendSuccess(res, {
       data: device.getStatus(),
       meta: { syncedDevice },
