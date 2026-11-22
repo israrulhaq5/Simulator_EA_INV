@@ -215,9 +215,20 @@ class ZeroExportService {
       ]);
     }
 
+    if (
+      inverterRegister.length !== 1 ||
+      inverterRegister.unit !== '%' ||
+      !(inverterRegister.scaleFactor > 0)
+    ) {
+      throw validationError('Use a single-word percentage power-limit register.', [
+        { field: 'inverterRegisterKey', message: 'Required: writable UINT16 % setpoint.', code: 'unsupported_register' },
+      ]);
+    }
+
     return {
       ...input,
       inverterRegisterAddress: inverterRegister.address,
+      inverterRegisterScaleFactor: inverterRegister.scaleFactor,
       meterDeviceId: meterDevice._id,
       inverterDeviceId: inverterDevice._id,
       simulation: input.simulation ?? { enabled: false, loadKw: 100 },
@@ -293,7 +304,10 @@ class ZeroExportService {
       }
 
       await this.connectionManager.execute(inverterDevice, 'zero-export', async (client) => {
-        await client.writeRegister(configuration.inverterRegisterAddress, next);
+        // The controller uses normalized 0..1000 (tenths of one percent).
+        // Huawei 0.1%, Knox/Solis 0.01%: convert to raw wire words.
+        const raw = this.normalizedToWire(next, configuration);
+        await client.writeRegister(configuration.inverterRegisterAddress, raw);
       });
 
       this.deratingRaw = next;
@@ -338,9 +352,11 @@ class ZeroExportService {
         return { ok: false, reason: 'Simulated inverter output is stale or missing.' };
       }
       const loadKw = configuration.simulation.loadKw ?? 0;
+      const powerW = String(inverterPower.unit || '').toLowerCase() === 'w';
+      const inverterKw = Number(inverterPower.value) / (powerW ? 1000 : 1);
       return {
         ok: true,
-        gridKw: loadKw - Number(inverterPower.value),
+        gridKw: loadKw - inverterKw,
         source: 'SIMULATION',
       };
     }
@@ -378,13 +394,25 @@ class ZeroExportService {
     }
   }
 
+  normalizedToWire(normalized, configuration) {
+    const scale = configuration.inverterRegisterScaleFactor || 0.1;
+    const raw = Math.round((normalized / 10) / scale);
+    if (!Number.isInteger(raw) || raw < 0 || raw > 65535) {
+      throw new Error('Power-limit command outside Modbus UINT16 range.');
+    }
+    return raw;
+  }
+
   async writeFailsafe(configuration) {
     const inverterDevice = await this.deviceRepository.findById(configuration.inverterDeviceId);
     if (!inverterDevice) {
       return;
     }
     await this.connectionManager.execute(inverterDevice, 'zero-export', async (client) => {
-      await client.writeRegister(configuration.inverterRegisterAddress, configuration.failsafeDerating);
+      await client.writeRegister(
+        configuration.inverterRegisterAddress,
+        this.normalizedToWire(configuration.failsafeDerating, configuration),
+      );
     });
     this.deratingRaw = configuration.failsafeDerating;
     this.recordAction({

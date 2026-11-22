@@ -11,6 +11,7 @@ const DEFAULT_CONFIGURATION = Object.freeze({
   inverterDeviceId: null,
   inverterRegisterKey: 'active_power_derating',
   inverterRegisterAddress: 40125,
+  inverterRegisterScaleFactor: 0.1,
   targetGridKw: 0,
   deadbandKw: 0.5,
   stepPerCycle: 20,

@@ -49,6 +49,7 @@ const zeroExportConfigurationSchema = new mongoose.Schema(
       max: 65535,
       default: 40125,
     },
+    inverterRegisterScaleFactor: { type: Number, min: 0.0001, max: 100, default: 0.1 },
     targetGridKw: { type: Number, default: 0 },
     deadbandKw: { type: Number, default: 0.5, min: 0, max: 10000 },
     // Derating is expressed in raw register units (0-1000 = 0-100%).
