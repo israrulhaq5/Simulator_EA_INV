@@ -244,6 +244,9 @@ export function SimulatorView({ devices, profiles, notify, onForwardProfile }) {
         .updateSimulatorDevice("solis", { options: { loadKw } })
         .catch(() => undefined);
       void api
+        .updateSimulatorDevice("sungrow", { options: { loadKw } })
+        .catch(() => undefined);
+      void api
         .updateSimulatorDevice("knox", { options: { loadKw } })
         .catch(() => undefined);
     }
