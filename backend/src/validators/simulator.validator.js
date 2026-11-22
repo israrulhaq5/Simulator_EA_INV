@@ -2,7 +2,7 @@
 
 const { z } = require('./common.validator');
 
-const SIMULATOR_DEVICE_KEYS = ['em500', 'huawei', 'solis', 'sungrow'];
+const SIMULATOR_DEVICE_KEYS = ['em500', 'huawei', 'solis', 'sungrow', 'knox'];
 
 const simulatorDeviceKeyParamSchema = z.object({
   deviceKey: z.enum(SIMULATOR_DEVICE_KEYS),

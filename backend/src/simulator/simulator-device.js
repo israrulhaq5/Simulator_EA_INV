@@ -5,6 +5,7 @@ const logger = require('../config/logger');
 const { REGISTER_TYPES } = require('../constants/modbus');
 const { encodeRegister } = require('../modbus/register-encoder');
 const { decodeRegister } = require('../modbus/register-decoder');
+const { initialKnoxModel, computeKnox } = require('./knox-model');
 
 const SIMULATOR_STATES = Object.freeze({
   STOPPED: 'STOPPED',
@@ -149,6 +150,7 @@ class SimulatorDevice {
   }
 
   createModel() {
+    if (this.key === 'knox') return initialKnoxModel();
     if (this.deviceType === 'Sungrow inverter') {
       return {
         manufacturer: 'Sungrow',
@@ -431,6 +433,13 @@ class SimulatorDevice {
       );
     }
 
+    if (definition.key === 'active_power_set' && rawValues[0] > 10000) {
+      throw modbusError('Knox active power setpoint must be 0..10000.', 0x03);
+    }
+    if (['remote_switch_command', 'active_power_control_enable'].includes(definition.key) &&
+        ![0, 1].includes(rawValues[0])) {
+      throw modbusError('Knox control flag must be 0 or 1.', 0x03);
+    }
     rawValues.forEach((word, offset) => {
       this.memory.set(this.addressKey(registerType, address + offset), word);
     });
@@ -441,6 +450,9 @@ class SimulatorDevice {
     if (definition.key === 'active_power_derating') {
       this.model.deratingRaw = Math.round(decoded.value / 0.1);
     }
+    if (definition.key === 'active_power_set') this.model.deratingRaw = Math.round(decoded.value * 100);
+    if (definition.key === 'active_power_control_enable') this.model.activePowerControlEnabled = Math.round(decoded.value);
+    if (definition.key === 'remote_switch_command') this.model.remotePowerSwitch = Math.round(decoded.value);
     if (definition.key === 'active_power_fixed_limit') {
       this.model.fixedDeratingW = decoded.value;
     }
@@ -482,8 +494,10 @@ class SimulatorDevice {
   tick() {
     const now = new Date();
     const values =
-      this.deviceType === 'Huawei SUN2000 inverter'
-        ? this.computeHuawei()
+      this.key === 'knox'
+        ? computeKnox(this)
+        : this.deviceType === 'Huawei SUN2000 inverter'
+          ? this.computeHuawei()
         : this.deviceType === 'Solis inverter'
           ? this.computeSolis()
           : this.deviceType === 'Sungrow inverter'
@@ -538,7 +552,7 @@ class SimulatorDevice {
   defaultCoupledInverterKw() {
     try {
       const { getDevice } = require('../simulator');
-      const keys = ['huawei', 'solis', 'sungrow'];
+      const keys = ['huawei', 'solis', 'sungrow', 'knox'];
       let total = 0;
       for (const key of keys) {
         const inverter = getDevice(key);
@@ -546,7 +560,7 @@ class SimulatorDevice {
         const value = inverter.values.get('active_power');
         if (value) {
           // Huawei publishes kW; Solis and Sungrow publish W (scale 1).
-          total += ['solis', 'sungrow'].includes(key)
+          total += ['solis', 'sungrow', 'knox'].includes(key)
             ? Number(value.value) / 1000
             : Number(value.value);
           continue;
@@ -557,7 +571,7 @@ class SimulatorDevice {
         const ratingKw = inverter.configuration.options?.ratingKw ?? 100;
         const availabilityPct = inverter.configuration.options?.availabilityPct ?? 100;
         const deratingFraction =
-          key === 'solis'
+          ['solis', 'knox'].includes(key)
             ? clamp(model.deratingRaw, 0, 10000) / 10000
             : clamp(model.deratingRaw, 0, 1000) / 1000;
         let kw = ratingKw * (availabilityPct / 100) * deratingFraction;
@@ -1087,7 +1101,7 @@ class SimulatorDevice {
       servedRegisterCount: this.values.size,
       readBlocks: this.readBlocks(),
       deratingPercent: this.model.deratingRaw !== undefined
-        ? Math.round((this.model.deratingRaw / 10) * 10) / 10
+        ? (['knox', 'solis'].includes(this.key) ? Math.round(this.model.deratingRaw / 10) / 10 : Math.round((this.model.deratingRaw / 10) * 10) / 10)
         : undefined,
     };
   }

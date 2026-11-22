@@ -77,6 +77,7 @@ async function bootstrap() {
         em500: status.devices.em500.state,
         huawei: status.devices.huawei.state,
         solis: status.devices.solis.state,
+        knox: status.devices.knox.state,
       });
     } catch (error) {
       logger.error('Unable to start the device simulators', {
