@@ -1,6 +1,8 @@
 # Orange Pi deployment report
 
-Status: Mac qualification passed. Orange Pi deployment is pending SSH access.
+Updated: 2026-11-26 (Asia/Karachi)
+
+Status: Mac qualification passed for `ce17403`. Deployment is blocked after SSH authentication. Deployed commit and live dashboard URL are unconfirmed.
 
 ## Mac qualification
 
@@ -13,6 +15,9 @@ Status: Mac qualification passed. Orange Pi deployment is pending SSH access.
 
 ## Orange Pi acceptance pending
 
-- The previously trusted SSH endpoint offered password authentication but rejected noninteractive key authentication. The alternative endpoint's host key needs independent verification.
-- Hardware identity, deployed commit, dashboard URL, ARMv7 execution, native dependencies, resource usage, physical isolation, service restart and authorized reboot remain unverified.
+- The router lists `orangepizero` online on Wi-Fi. The Wi-Fi endpoint presented the previously trusted SSH host key, and SSH confirmed password authentication before the session timed out. A remote identity command returned no output. Dashboard port 8080 was unreachable from the Mac on both tested endpoints.
+- The requested Wi-Fi DHCP reservation is pending router admin access. No device answered the Mac's ARP probe for the proposed address. Check the router lease table before saving the reservation and confirm the new lease after renewal.
+- Board model, ARMv7 execution, native dependencies, on-device regressions and Modbus reads, configuration persistence across restart, physical isolation, CPU/RAM/storage usage and automatic startup after an authorized reboot remain unverified.
 - Installer still refuses partial installations. Inspect any existing deployment and preserve its database before retrying. Confirm trusted-LAN restrictions on the simulator TCP ports as part of on-device qualification.
+
+Next step: Restore an SSH session or obtain direct console access to diagnose the post-authentication timeout, then verify board identity and deployment state before installation.
