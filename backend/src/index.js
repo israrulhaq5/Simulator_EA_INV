@@ -46,7 +46,7 @@ async function shutdown(reason, exitCode = 0) {
       logger.close();
       process.exit(serverError ? 1 : exitCode);
     } catch (error) {
-      logger.error('Error while disconnecting MongoDB during shutdown', {
+      logger.error('Error while disconnecting SQLite during shutdown', {
         error: error.stack || error.message,
       });
       logger.close();

@@ -2,8 +2,10 @@
 
 const SimulatorDeviceSettings = require('../models/simulator-device-settings.model');
 
+const { sqliteModel } = require('../storage/sqlite');
+
 class SimulatorSettingsRepository {
-  constructor(model = SimulatorDeviceSettings) {
+  constructor(model = sqliteModel(SimulatorDeviceSettings)) {
     this.model = model;
   }
 

@@ -23,3 +23,9 @@ npm-debug.log*
 
 # Backend runtime logs
 backend/logs/
+
+# Local SQLite persistence (never commit runtime data)
+backend/data/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm

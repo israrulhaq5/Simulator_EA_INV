@@ -85,12 +85,6 @@ if (environment === 'production' && corsOrigins.includes('*')) {
   throw configurationError('CORS_ORIGINS cannot contain "*" in production.');
 }
 
-const mongoMaxPoolSize = readInteger('MONGODB_MAX_POOL_SIZE', 20, { min: 1, max: 500 });
-const mongoMinPoolSize = readInteger('MONGODB_MIN_POOL_SIZE', 0, { min: 0, max: 100 });
-if (mongoMinPoolSize > mongoMaxPoolSize) {
-  throw configurationError('MONGODB_MIN_POOL_SIZE cannot exceed MONGODB_MAX_POOL_SIZE.');
-}
-
 const config = Object.freeze({
   environment,
   isProduction: environment === 'production',
@@ -102,12 +96,7 @@ const config = Object.freeze({
     gracefulShutdownTimeoutMs: readInteger('GRACEFUL_SHUTDOWN_TIMEOUT_MS', 10000, { min: 1000, max: 120000 }),
   }),
   database: Object.freeze({
-    uri: process.env.MONGODB_URI?.trim() || null,
-    dbName: process.env.MONGODB_DB_NAME?.trim() || undefined,
-    serverSelectionTimeoutMs: readInteger('MONGODB_SERVER_SELECTION_TIMEOUT_MS', 5000, { min: 1000, max: 120000 }),
-    socketTimeoutMs: readInteger('MONGODB_SOCKET_TIMEOUT_MS', 45000, { min: 1000, max: 600000 }),
-    maxPoolSize: mongoMaxPoolSize,
-    minPoolSize: mongoMinPoolSize,
+    file: process.env.SQLITE_PATH || path.resolve(process.cwd(), 'data', 'zero-export.sqlite'),
   }),
   http: Object.freeze({
     corsOrigins: Object.freeze(corsOrigins),
@@ -149,15 +138,7 @@ const config = Object.freeze({
   }),
 });
 
-function requireDatabaseUri() {
-  if (!config.database.uri) {
-    throw configurationError('MONGODB_URI is required to start the server.');
-  }
-
-  return config.database.uri;
-}
 
 module.exports = {
   config,
-  requireDatabaseUri,
 };
