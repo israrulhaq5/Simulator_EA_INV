@@ -43,16 +43,19 @@ class SimulatorController {
     const deviceKey = req.validated.params.deviceKey;
     const body = req.validated.body;
     const device = this.runtime.getDevice(deviceKey);
-    const wasRunning = device.getStatus().state === 'RUNNING';
+    const previous = device.getStatus();
+    const wasRunning = previous.state === 'RUNNING';
+    const settingsFrom = ({ host, port, unitId, updateIntervalMs, options }) => ({ host, port, unitId, updateIntervalMs, options });
     await stopDevice(deviceKey);
     device.configure(body);
 
-    // Persist the settings so they survive a backend restart.
+    // Save a complete settings record even when the request changes only one field.
     try {
-      await this.settingsRepository.save(deviceKey, body);
+      await this.settingsRepository.save(deviceKey, settingsFrom(device.getStatus()));
     } catch (error) {
-      // Persistence failure should not break the live configuration.
-      this.runtime.logger?.warn?.(`Unable to persist simulator settings for ${deviceKey}`, error?.message);
+      device.configure(settingsFrom(previous));
+      if (wasRunning) await startDevice(deviceKey);
+      throw error;
     }
 
     // Keep the linked EMS device in sync so polling keeps working with the

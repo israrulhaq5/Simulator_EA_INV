@@ -1,5 +1,7 @@
 # Orange Pi SQLite branch (qualification pending)
 
+For the installation procedure, see [deploy/pi/README.md](deploy/pi/README.md). A gated installer is available at `deploy/pi/install.sh`.
+
 This branch stores runtime documents in a local SQLite database using Node.js 22.13+ built-in `node:sqlite`. Mongoose is retained only for offline schema validation and compatible identifiers; no MongoDB server is required. SQLite uses WAL, full synchronization, indexed JSON fields, and serialized transactional writes. Set `SQLITE_PATH` in `backend/.env` and ensure its directory is writable. `npm run db:create-indexes --prefix backend` initializes schema/indexes. Existing MongoDB data is not automatically imported. The original README below describes the upstream MongoDB architecture; follow the SQLite instructions above instead for this branch. Do not connect to physical control equipment before ARMv7 qualification and functional acceptance.
 
 # Zero Export — Energy Monitoring System

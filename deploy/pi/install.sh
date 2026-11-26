@@ -21,17 +21,19 @@ port=8080
 lan="${SIMULATOR_LAN_CIDR:-127.0.0.1/32}"
 # Only a syntactically valid IPv4 CIDR can be inserted into Nginx configuration.
 [[ "$lan" =~ ^[0-9]{1,3}(\.[0-9]{1,3}){3}/[0-9]{1,2}$ ]] || { echo "Invalid SIMULATOR_LAN_CIDR"; exit 1; }
-[[ ! -e "$app" && ! -e "$state" && ! -e /etc/systemd/system/$service.service && ! -e /etc/nginx/conf.d/$service.conf ]] || {
+[[ ! -e /etc/zero-export-pi.env && ! -e "$runtime" && ! -e "$app" && ! -e "$state" && ! -e /etc/systemd/system/$service.service && ! -e /etc/nginx/conf.d/$service.conf ]] || {
   echo "Existing deployment detected. This installer is fresh-install only; refusing to overwrite data or configuration."; exit 1;
 }
-if ss -H -lnt "( sport = :$port or sport = :3001 )" | grep -q .; then echo "Port 8080 or 3001 already in use"; exit 1; fi
+if ss -H -lnt "( sport = :$port or sport = :3001 or sport = :15020 or sport = :15021 or sport = :15022 or sport = :15023 )" | grep -q .; then echo "Required HTTP or simulator port already in use"; exit 1; fi
 if [[ $(df -Pm /opt | awk 'NR==2{print $4}') -lt 1800 ]]; then echo "At least 1800 MB free on /opt required"; exit 1; fi
 apt-get update
 apt-get install -y --no-install-recommends ca-certificates curl xz-utils git build-essential python3 nginx-light sqlite3 rsync iproute2
-tmp="$(mktemp -d)"
+tmp="$(mktemp -d /var/tmp/zero-export-pi.XXXXXXXX)"
 swapfile=""
 cleanup() {
-  if [[ -n "$swapfile" ]]; then swapoff "$swapfile" && rm -f "$swapfile" || echo "Temporary swap remains active: $swapfile" >&2; fi
+  if [[ -n "$swapfile" ]] && swapon --noheadings --raw --output NAME | grep -Fxq "$swapfile"; then
+    if ! swapoff "$swapfile"; then echo "Temporary swap remains active: $swapfile" >&2; return; fi
+  fi
   rm -rf "$tmp"
 }
 trap cleanup EXIT
@@ -73,6 +75,8 @@ run_build npm --prefix "$app/backend" prune --omit=dev --no-audit --no-fund
 rm -rf "$app/frontend/node_modules"
 chown -R root:root "$app" "$runtime"
 chmod 755 "$app" "$app/frontend" "$app/frontend/dist"
+find "$app/frontend/dist" -type d -exec chmod 755 {} +
+find "$app/frontend/dist" -type f -exec chmod 644 {} +
 cat > /etc/zero-export-pi.env <<ENV
 NODE_ENV=production
 HOST=127.0.0.1
@@ -122,11 +126,6 @@ UNIT
 # Same-origin UI/API, no wildcard CORS and no internet-facing access.
 # Refuse browser requests with a foreign Origin before removing it.
 cat > "/etc/nginx/conf.d/$service.conf" <<NGINX
-map \$http_origin \$zero_export_origin_ok {
-    default 0;
-    "" 1;
-    "http://\$http_host" 1;
-}
 server {
     listen 8080;
     server_name _;
@@ -140,7 +139,10 @@ server {
         try_files \$uri \$uri/ /index.html;
     }
     location ~ ^/(api/|health\$|ready\$) {
-        if (\$zero_export_origin_ok = 0) { return 403; }
+        set \$zero_export_allowed 0;
+        if (\$http_origin = "") { set \$zero_export_allowed 1; }
+        if (\$http_origin = "http://\$http_host") { set \$zero_export_allowed 1; }
+        if (\$zero_export_allowed = 0) { return 403; }
         proxy_pass http://127.0.0.1:3001;
         proxy_http_version 1.1;
         proxy_set_header Host \$host;
@@ -149,19 +151,11 @@ server {
     }
 }
 NGINX
-# Use a separate, explicit per-host origin list: Nginx map string keys are literal,
-# so replace the dynamic key with a comparison in the location block below.
-python3 - "/etc/nginx/conf.d/$service.conf" <<'PY'
-import sys
-p=sys.argv[1]
-s=open(p).read()
-s=s[s.index("server {"):]
-s=s.replace("if ($zero_export_origin_ok = 0) { return 403; }", "set $zero_export_allowed 0;\n        if ($http_origin = \"\") { set $zero_export_allowed 1; }\n        if ($http_origin = \"http://$http_host\") { set $zero_export_allowed 1; }\n        if ($zero_export_allowed = 0) { return 403; }")
-open(p,"w").write(s)
-PY
 nginx -t
 systemctl daemon-reload
 systemctl start "$service"
+# Stop the new application if any subsequent qualification gate fails.
+trap 'systemctl stop "$service" || true; echo "INSTALL FAILED at line $LINENO; application stopped." >&2' ERR
 for attempt in $(seq 1 30); do
   if curl -fsS http://127.0.0.1:3001/ready >/dev/null; then break; fi
   sleep 1
@@ -169,17 +163,15 @@ done
 curl -fsS http://127.0.0.1:3001/ready
 systemctl enable --now nginx
 systemctl reload nginx
-curl -fsS http://127.0.0.1:8080/ready
-curl -fsS http://127.0.0.1:8080/ >/dev/null
-sqlite3 "$state/zero-export.sqlite" 'PRAGMA quick_check;' | grep -qx ok
+bash "$app/deploy/pi/acceptance.sh"
 systemctl restart "$service"
 for attempt in $(seq 1 30); do
   if curl -fsS http://127.0.0.1:8080/ready >/dev/null; then break; fi
   sleep 1
 done
-curl -fsS http://127.0.0.1:8080/ready
+bash "$app/deploy/pi/acceptance.sh"
 systemctl enable "$service"
 systemctl --no-pager status "$service"
-echo "INSTALL PASS — local API, UI, SQLite integrity and service restart verified."
+echo "INSTALL PASS — regression suite, UI, four simulators, SQLite integrity and service restart verified."
 echo "UI port 8080; allow-list: $lan. Do not port-forward this unauthenticated industrial test UI."
 hostname -I

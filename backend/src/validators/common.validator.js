@@ -4,7 +4,7 @@ const { z } = require('zod');
 
 const OBJECT_ID_PATTERN = /^[a-fA-F\d]{24}$/;
 
-const objectIdSchema = z.string().regex(OBJECT_ID_PATTERN, 'Must be a valid MongoDB ObjectId.');
+const objectIdSchema = z.string().regex(OBJECT_ID_PATTERN, 'Must be a valid 24-character hexadecimal identifier.');
 const nonEmptyString = z.string().trim().min(1, 'Cannot be empty.');
 const optionalText = z.string().trim().min(1).max(2000).nullable().optional();
 

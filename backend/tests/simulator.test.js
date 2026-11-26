@@ -487,8 +487,9 @@ test('simulator settings update syncs the linked EMS device unit ID and port', a
     getValues: () => [],
     logger: { warn: () => undefined },
   };
+  let persistedSettings;
   const settingsRepository = {
-    save: async () => undefined,
+    save: async (_key, settings) => { persistedSettings = settings; },
   };
   let updatedPatch = null;
   const deviceRepository = {
@@ -523,6 +524,9 @@ test('simulator settings update syncs the linked EMS device unit ID and port', a
   assert.equal(simulatorDevices.sungrow.getStatus().port, 15024);
   assert.equal(updatedPatch.unitId, 7);
   assert.equal(updatedPatch.connection.port, 15024);
+  assert.equal(persistedSettings.port, 15024);
+  assert.equal(persistedSettings.unitId, 7);
+  assert.ok(persistedSettings.options);
   // restore defaults
   await require('../src/simulator').stopDevice('sungrow');
   simulatorDevices.sungrow.configure({ host: '0.0.0.0', port: 15023, unitId: 4, updateIntervalMs: 1000 });
