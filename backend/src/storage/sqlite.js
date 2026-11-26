@@ -3,7 +3,7 @@
 // SQLite is the only runtime datastore. Mongoose model classes are used solely
 // for their offline document validation, defaults and existing ObjectId shape.
 const { DatabaseSync } = require('node:sqlite');
-const { mkdirSync } = require('node:fs');
+const { mkdirSync, chmodSync } = require('node:fs');
 const path = require('node:path');
 const { config } = require('../config/environment');
 
@@ -88,6 +88,9 @@ function open(file = config.database.file) {
   const connection = new DatabaseSync(file);
   db = connection;
   try {
+    if (file !== ':memory:') chmodSync(file, 0o600);
+    const version = db.prepare('PRAGMA user_version').get().user_version;
+    if (version > 1) throw new Error('SQLite database schema is newer than this application');
     db.exec('PRAGMA busy_timeout=5000; PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL; PRAGMA foreign_keys=ON;');
     db.function('js_regexp', (source, flags, value) => value == null ? 0 : Number(new RegExp(source, flags).test(String(value))));
     db.exec('BEGIN IMMEDIATE');
@@ -154,7 +157,12 @@ async function persist(Model, previous, patch, insert = false) {
   }
   await document.validate();
   const body = JSON.parse(JSON.stringify(document.toObject({ virtuals: true })));
-  db.prepare('INSERT INTO ' + table(Model.modelName) + '(id,body) VALUES (?,?) ON CONFLICT(id) DO UPDATE SET body=excluded.body').run(String(body._id), JSON.stringify(body));
+  if (previous) {
+    if (String(body._id) !== String(previous._id)) throw new Error('Cannot change record identity');
+    db.prepare('UPDATE ' + table(Model.modelName) + ' SET body = ? WHERE id = ?').run(JSON.stringify(body), String(body._id));
+  } else {
+    db.prepare('INSERT INTO ' + table(Model.modelName) + '(id,body) VALUES (?,?)').run(String(body._id), JSON.stringify(body));
+  }
   if (Model.modelName === 'CommunicationLog' && Date.now() - lastPrune > 60000) prune();
   return body;
 }

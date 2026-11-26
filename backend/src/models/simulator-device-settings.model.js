@@ -7,7 +7,7 @@ const simulatorDeviceSettingsSchema = new mongoose.Schema(
     key: {
       type: String,
       required: true,
-      enum: ['em500', 'huawei', 'solis'],
+      enum: ['em500', 'huawei', 'solis', 'sungrow'],
     },
     host: { type: String, trim: true, maxlength: 253, default: '0.0.0.0' },
     port: { type: Number, min: 1, max: 65535, required: true },
