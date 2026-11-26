@@ -26,7 +26,7 @@ function table(name) {
 }
 function field(key) {
   if (key === '_id') return 'id';
-  if (!/^[a-zA-Z_][a-zA-Z0-9_]*(\\.[a-zA-Z_][a-zA-Z0-9_]*)*$/.test(key)) {
+  if (!/^[a-zA-Z_][a-zA-Z0-9_]*(\.[a-zA-Z_][a-zA-Z0-9_]*)*$/.test(key)) {
     throw new Error('Unsupported SQLite field: ' + key);
   }
   return "json_extract(body, '$." + key + "')";
