@@ -40,7 +40,7 @@ See the follow-up below for subsequent boot and acceptance evidence.
 | Check | Result | Evidence |
 | --- | --- | --- |
 | Cockpit HTTPS on 9090 | PASS | LAN connection returned HTTP 200 over TLS. Plain HTTP redirected to HTTPS with HTTP 301. |
-| Certificate validation with default client trust | FAIL | The live endpoint presented a self-signed certificate that the client did not trust. The reachability probe used TLS without certificate validation and sent no credentials. |
+| Certificate validation with default client trust | FAIL | The live endpoint presented a self-signed certificate. A second check used the public certificate retrieved over host-key-verified SSH as the trust anchor. IP validation still failed because the certificate SAN contains only 127.0.0.1 and localhost. The reachability probe sent no credentials. |
 | Anonymous authentication gate | PASS | An unsigned-in request to `/cockpit/login` returned HTTP 401. |
 | Successful local authentication, admin permissions, trusted-LAN restriction | Pending | Requires authenticated access and a test from outside the allowed source or ingress path. |
 | CPU, RAM, storage and temperature pages | Pending | Requires an authenticated browser session. |
