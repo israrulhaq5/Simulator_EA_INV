@@ -31,8 +31,9 @@ apt-get install -y --no-install-recommends ca-certificates curl xz-utils git bui
 tmp="$(mktemp -d /var/tmp/zero-export-pi.XXXXXXXX)"
 swapfile=""
 cleanup() {
-  if [[ -n "$swapfile" ]] && swapon --noheadings --raw --output NAME | grep -Fxq "$swapfile"; then
-    if ! swapoff "$swapfile"; then echo "Temporary swap remains active: $swapfile" >&2; return; fi
+  if [[ -n "$swapfile" ]] &&
+    awk -v file="$swapfile" 'NR > 1 && $1 == file { found = 1 } END { exit !found }' /proc/swaps; then
+    if ! swapoff "$swapfile"; then echo "Temporary swap remains active: $swapfile" >&2; return 1; fi
   fi
   rm -rf "$tmp"
 }
@@ -172,6 +173,7 @@ done
 bash "$app/deploy/pi/acceptance.sh"
 systemctl enable "$service"
 systemctl --no-pager status "$service"
+trap - ERR
 echo "INSTALL PASS — regression suite, UI, four simulators, SQLite integrity and service restart verified."
 echo "UI port 8080; allow-list: $lan. Do not port-forward this unauthenticated industrial test UI."
 hostname -I
