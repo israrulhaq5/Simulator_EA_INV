@@ -1,6 +1,6 @@
 {
   "version": 0,
   "menu": {
-    "index": { "label": "Board temperature", "order": 45 }
+    "index": { "label": "Temperature and storage", "order": 45 }
   }
 }

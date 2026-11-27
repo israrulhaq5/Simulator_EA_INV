@@ -14,7 +14,7 @@ Cockpit adds a second HTTPS listener on the Pi’s Ethernet address at port 9090
    sudo bash deploy/pi/install-cockpit.sh 192.168.100.152 192.168.100.0/24 end0
    ```
 
-The installer uses `--no-install-recommends` and leaves the Simulator’s service and files untouched. It installs the native storage page and adds native networking when NetworkManager already owns the Ethernet interface. On a 512 MB Pi, use the matched test conditions below to quantify the impact of the storage and network services. The nftables rules loaded before the Cockpit socket opens apply solely to port 9090 on the selected IPv4 address. They require both the Ethernet ingress interface and the trusted source subnet. Keep the existing firewall rules and ensure firewall reloads preserve the `automatrix_cockpit` table. Cockpit starts on demand through `cockpit.socket`.
+The installer uses `--no-install-recommends` and leaves the Simulator’s service and files untouched. The optional page reads root filesystem usage and CPU temperature on demand. It adds native networking when NetworkManager already owns the Ethernet interface. On a 512 MB Pi, use the matched test conditions below to quantify the impact of Cockpit and the network service. The nftables rules loaded before the Cockpit socket opens apply solely to port 9090 on the selected IPv4 address. They require both the Ethernet ingress interface and the trusted source subnet. Keep the existing firewall rules and ensure firewall reloads preserve the `automatrix_cockpit` table. Cockpit starts on demand through `cockpit.socket`.
 
 ## NetworkManager handoff
 
@@ -27,7 +27,7 @@ After a successful handoff, install `cockpit-networkmanager/trixie-backports` wi
 ## Acceptance and overhead
 
 - From the trusted LAN, verify HTTPS, a failed unauthenticated request to `/cockpit/login`, successful PAM login, and administrative access. Test 9090 from outside the allowed source or ingress path and confirm the nftables counter increments. Verify 8080 separately.
-- Open CPU and memory metrics, Storage and Board temperature. Compare them with system counters, `df` and `/sys/class/thermal/thermal_zone0/temp`. In Networking verify Ethernet and Wi-Fi management and the IPv4 configuration methods.
+- Open CPU and memory metrics and Temperature and storage. Compare them with system counters, `df` and `/sys/class/thermal/thermal_zone0/temp`. In Networking verify Ethernet and Wi-Fi management and the IPv4 configuration methods.
 - In Services, stop, start and restart `zero-export-pi.service` in the maintenance window. Observe the corresponding readiness changes and restore enabled startup. Verify journal output and execute `id` in the web terminal. Verify reboot and shutdown actions with console access for power-on after shutdown.
 - Capture three 10-second samples for each state with `sudo bash deploy/pi/cockpit/measure.sh PHASE`. Use `pre-install` after boot settles, `socket-idle` after all Cockpit login sessions and workers exit, and `browser-active` while logged into CPU and memory metrics. Keep Simulator traffic and other clients comparable. Report median host CPU busy percentage, available RAM and root filesystem byte delta. Report per-process RSS individually because shared pages may be counted in several processes. Record NetworkManager and udisks overhead alongside Cockpit if installed. Keep the APT transaction’s package footprint distinct from the root filesystem delta.
 - After reboot, compare boot IDs and verify enabled and active `zero-export-pi.service`, `nginx.service`, and `cockpit.socket`. Verify that Cockpit can launch on demand, then repeat Simulator acceptance, the full SQLite integrity check, the 115 backend tests and settings comparison. Confirm gateway and zero-export remain disabled. With the live Simulator running, run the test suite in an isolated network namespace so that its test listeners can bind the expected ports. On the deployed Pi, run from `/opt/automatrix/zero-export-pi/backend`:
@@ -49,5 +49,7 @@ sudo nft delete table inet automatrix_cockpit
 sudo rm -r /usr/local/share/cockpit/amx-temperature
 sudo systemctl daemon-reload
 ```
+
+If a dedicated certificate was provisioned separately, remove its matching certificate and key from `/etc/cockpit/ws-certs.d/` only after identifying the exact pair. Keep a usable fallback certificate and restart the Cockpit service on the next connection.
 
 Review the exact APT transaction in `/var/log/apt/history.log` before purging any newly installed Cockpit packages. Keep pre-existing packages and active network services. If a network migration was performed, restore it separately from the serial console using the saved backend configuration and verify SSH and port 8080 again.

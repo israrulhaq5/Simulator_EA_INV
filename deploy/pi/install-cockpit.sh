@@ -40,7 +40,7 @@ if nft list table inet automatrix_cockpit >/dev/null 2>&1; then
   exit 1
 fi
 release=trixie-backports
-packages=("cockpit-ws/$release" "cockpit-bridge/$release" "cockpit-system/$release" "cockpit-storaged/$release")
+packages=("cockpit-ws/$release" "cockpit-bridge/$release" "cockpit-system/$release")
 if systemctl is-active --quiet NetworkManager && nmcli -g GENERAL.NM-MANAGED device show "$interface" | grep -qx yes; then
   packages+=("cockpit-networkmanager/$release")
 else

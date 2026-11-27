@@ -2,13 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Board temperature</title>
+  <title>Temperature and storage</title>
   <script src="../base1/cockpit.js"></script>
   <script src="temperature.js" defer></script>
 </head>
 <body>
-  <h1>Board temperature</h1>
+  <h1>Temperature and storage</h1>
   <button id="refresh" type="button">Refresh</button>
+  <h2>CPU temperature</h2>
   <p id="reading" role="status">Reading board sensor…</p>
+  <h2>Root filesystem</h2>
+  <p id="storage" role="status">Reading filesystem usage…</p>
 </body>
 </html>

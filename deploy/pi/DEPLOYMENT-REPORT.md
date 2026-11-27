@@ -2,7 +2,7 @@
 
 Updated: 2026-11-27 (Asia/Karachi)
 
-Status: Simulator automatic startup verified on the 14:11 PKT reboot. Cockpit was installed later in the same boot and its post-install reboot acceptance is pending.
+Status: Simulator automatic startup verified on the 14:11 PKT reboot. Cockpit, Simulator and Nginx automatic startup passed on the subsequent 15:04 PKT reboot.
 
 Deployed source: `a4eb1cc3b1271d6e261f76af880efdb144c824d7`. Dashboard: `http://192.168.100.152:8080/` from the lab LAN.
 
@@ -79,8 +79,18 @@ On 2026-11-27, SSH key login as `amx` succeeded over Ethernet and Wi-Fi. The use
 
 | Measurement | Pre-install | Socket-only | Signed-in terminal |
 | --- | --- | --- | --- |
-| Host CPU busy across four cores, 10-second sample | Unavailable | Pending | 12.90% |
-| Available RAM | Unavailable | Pending | 338,076 KiB |
-| Root filesystem used | Unavailable | Pending | 2,005,446,656 bytes |
+| Host CPU busy across four cores, 10-second sample | Unavailable | 1.03% | 12.90% |
+| Available RAM | Unavailable | 378,696 KiB | 338,076 KiB |
+| Root filesystem used | Unavailable | 2,008,092,672 bytes | 2,005,446,656 bytes |
 
-The signed-in-terminal sample was collected after the concurrent tests ended. Cockpit TLS, web server, session and two bridge processes individually used 4,524, 4,904, 3,352, 21,192 and 19,660 KiB RSS. RSS includes shared pages. The four Cockpit packages report 7,578 KiB of installed size and NetworkManager reports 5,904 KiB. The 26 packages retained from the original Cockpit APT transaction total 25,181 KiB of installed size at current versions, including dependencies. This is package metadata and does not establish the root filesystem delta.
+The signed-in-terminal sample was collected after the concurrent tests ended. The socket-only sample was taken after reboot, with the socket listening, the service inactive and no Cockpit worker processes. The two measurements are observations from different boots and do not isolate the CPU or RAM cost of Cockpit. Cockpit TLS, web server, session and two bridge processes individually used 4,524, 4,904, 3,352, 21,192 and 19,660 KiB RSS. RSS includes shared pages. The four Cockpit packages report 7,578 KiB of installed size and NetworkManager reports 5,904 KiB. The 26 packages retained from the original Cockpit APT transaction total 25,181 KiB of installed size at current versions, including dependencies. This is package metadata and does not establish the root filesystem delta.
+
+## Privileged acceptance and final reboot
+
+- **Simulator controls PASS.** Live SQLite `PRAGMA integrity_check` returned `ok`. Stopping the Simulator made readiness unavailable. Start and restart restored readiness.
+- **Post-install reboot PASS.** Boot ID changed from `ba2d5119-0556-4ac9-b08f-d012140f133d` to `25aaf9e8-7949-4772-b021-9d5003d61dc7`. Cockpit opened its enabled socket at 15:04:34 PKT and started its service on demand at 15:04:39. The Simulator and Nginx started at 15:04:37. Both Ethernet and Wi-Fi SSH returned after reboot.
+- **On-board Simulator acceptance PASS.** The full post-boot SQLite integrity result was `ok`. The acceptance script passed the UI, readiness, profile export, all four TCP listeners and disabled physical control checks. EM500 FC03 returned `[0, 23175]`, Huawei FC03 `[1, 15531]`, Solis FC04 `[2294]`, and Sungrow FC03 `[1000]`. The settings fingerprint matched the pre-reboot value for the four Simulator configurations and gateway and zero-export configuration. The isolated ARM backend suite passed again after reboot, 115/115 in 57.1 seconds.
+- **Trusted-LAN restriction PASS.** From an isolated test namespace with source `198.18.42.2`, the SSH control connection received a banner while HTTPS on 9090 timed out. Trusted LAN HTTPS returned 200, and the anonymous login endpoint returned 401. The temporary namespace was removed. The live Pi uses its existing systemd IP allowlist, which passed this test. The optional fresh installer uses a dedicated nftables rule.
+- **TLS address validation PASS with the explicitly trusted certificate.** The old certificate details above describe the pre-upgrade state. A Pi-generated self-signed certificate with IP SAN `192.168.100.152` now serves the endpoint. The Mac retrieved the public certificate through verified SSH and validated HTTPS using it as the trust anchor. Browser default trust remains pending.
+- **Temperature and storage provider PASS.** The deployed on-demand Cockpit package was enumerated by the bridge. The kernel sensor returned 64.9 °C and the root filesystem reported 27% used. The page adds disk monitoring without UDisks or metrics history. Browser rendering and native CPU/RAM, Logs and Services page interactions remain unverified.
+- Native Cockpit network editing still fails because NetworkManager does not manage the links. The prior reboot journal records an earlier Wi-Fi handoff attempt failing because NetworkManager reported wlan0 unavailable. The existing Ethernet and Wi-Fi paths were retained. Shutdown was not exercised because a power-on path was unavailable.
