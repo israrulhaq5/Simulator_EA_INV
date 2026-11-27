@@ -2,7 +2,7 @@
 
 Updated: 2026-11-27 (Asia/Karachi)
 
-Status: Deployed and verified over Ethernet. Service restart acceptance passed. Cold boot acceptance is pending a board reboot.
+Status: Simulator automatic startup verified on the 14:11 PKT reboot. Cockpit was installed later in the same boot and its post-install reboot acceptance is pending.
 
 Deployed source: `a4eb1cc3b1271d6e261f76af880efdb144c824d7`. Dashboard: `http://192.168.100.152:8080/` from the lab LAN.
 
@@ -25,13 +25,13 @@ Deployed source: `a4eb1cc3b1271d6e261f76af880efdb144c824d7`. Dashboard: `http://
 - Local readiness reported SQLite connected. `PRAGMA integrity_check` returned `ok`.
 - Four local Modbus TCP reads passed. EM500 FC03 at 2 returned `[0, 23267]`, Huawei FC03 at 32080 returned `[1, 14565]`, Solis FC04 at 3033 returned `[2302]`, and Sungrow FC03 at 5007 returned `[1000]`. The deployment acceptance script now issues those reads.
 
-## Orange Pi acceptance pending
+## Items pending at the original Simulator handoff
 
 - Automatic startup awaits a safe reboot. Physical RTU hardware was outside this isolated simulator qualification.
 - The requested Wi-Fi DHCP reservation remains pending router admin access. Deployment used the Ethernet address.
 - Installer remains fresh-install only. For partial installations preserve the SQLite database and inspect installed state before retrying.
 
-Next step: Reboot with operator approval, then verify the service starts automatically and rerun the on-board acceptance script.
+See the follow-up below for subsequent boot and acceptance evidence.
 
 ## Cockpit LAN verification
 
@@ -63,3 +63,24 @@ Next step: Reboot with operator approval, then verify the service starts automat
 | Storage | No matched sample | Unmeasured | Unmeasured |
 
 The previous Simulator-only qualification above gives historical context. Its single-service CPU figure uses a different denominator from the host CPU samples in the Cockpit runbook and cannot support an overhead delta. See [the Cockpit runbook](COCKPIT.md) for the matched samples, installation and rollback.
+
+## Authenticated board follow-up
+
+On 2026-11-27, SSH key login as `amx` succeeded over Ethernet and Wi-Fi. The user demonstrated a signed-in Cockpit web terminal. The SSH account requires an interactive sudo password, and the browser origin approval was declined. The checks below therefore use SSH plus the user’s browser evidence.
+
+- **Simulator boot PASS.** The journal shows the Simulator starting at 14:11:11 PKT and Nginx at 14:11:12 on boot `ba2d5119-0556-4ac9-b08f-d012140f133d`. The live readiness and on-board Modbus checks passed. EM500 FC03 returned `[0, 23497]`, Huawei FC03 `[1, 13357]`, Solis FC04 `[2346]`, and Sungrow FC03 `[1000]`. Gateway and zero-export remained disabled.
+- **Cockpit package selection PASS.** APT history shows installation with `--no-install-recommends`. The four installed Cockpit packages were all version `372-1~bpo13+1` on armhf. No installed Docker engine, Podman, containerd, PackageKit, PCP, Armbian desktop metapackage or UDisks package appeared in the inspected package inventory. The native Storage page is absent.
+- **Socket configuration PASS.** The enabled socket binds only to `192.168.100.152:9090`, the service is static, and the live unit has the trusted source range `192.168.100.0/24` configured. Kernel cgroup BPF support is present. An out-of-subnet rejection test remains pending. Cockpit was installed after the 14:11 reboot, so that reboot only establishes automatic startup for the Simulator and Nginx.
+- **Ethernet and Wi-Fi connectivity PASS.** Separate SSH connections reached `end0` at `192.168.100.152` and `wlan0` at `192.168.100.199`. Both used DHCP, gateway `192.168.100.1` and DNS `192.168.100.1`. Ethernet had route metric 100 and Wi-Fi 600. **Native network editing FAIL.** Both interfaces are managed by systemd-networkd. NetworkManager is installed and disabled. No backend migration or profile edits were performed.
+- **Temperature sensor PASS.** The kernel `cpu_thermal` sensor returned 59.1 °C and the temperature page was visible in the user's screenshot. The reading inside the Cockpit page and the CPU/RAM pages remain unverified. Journal access via SSH passed. Management through the Cockpit Logs and Services pages remains unverified.
+- **Fresh ARM suite PASS, 115/115.** The first two runs against the host network namespace reported 114 of 115. The serial retry identified `EADDRINUSE` on 15022 in the stopped-Solis test because the live Simulator already uses that port. The isolated loopback network namespace run passed all 115 tests in 59.4 seconds while the live Simulator kept running. The 97.52% host CPU sample taken during the first test run was excluded from the browser-only comparison.
+
+### On-board resource measurements
+
+| Measurement | Pre-install | Socket-only | Signed-in terminal |
+| --- | --- | --- | --- |
+| Host CPU busy across four cores, 10-second sample | Unavailable | Pending | 12.90% |
+| Available RAM | Unavailable | Pending | 338,076 KiB |
+| Root filesystem used | Unavailable | Pending | 2,005,446,656 bytes |
+
+The signed-in-terminal sample was collected after the concurrent tests ended. Cockpit TLS, web server, session and two bridge processes individually used 4,524, 4,904, 3,352, 21,192 and 19,660 KiB RSS. RSS includes shared pages. The four Cockpit packages report 7,578 KiB of installed size and NetworkManager reports 5,904 KiB. The 26 packages retained from the original Cockpit APT transaction total 25,181 KiB of installed size at current versions, including dependencies. This is package metadata and does not establish the root filesystem delta.

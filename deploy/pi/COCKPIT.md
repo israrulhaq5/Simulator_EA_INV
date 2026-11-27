@@ -30,7 +30,11 @@ After a successful handoff, install `cockpit-networkmanager/trixie-backports` wi
 - Open CPU and memory metrics, Storage and Board temperature. Compare them with system counters, `df` and `/sys/class/thermal/thermal_zone0/temp`. In Networking verify Ethernet and Wi-Fi management and the IPv4 configuration methods.
 - In Services, stop, start and restart `zero-export-pi.service` in the maintenance window. Observe the corresponding readiness changes and restore enabled startup. Verify journal output and execute `id` in the web terminal. Verify reboot and shutdown actions with console access for power-on after shutdown.
 - Capture three 10-second samples for each state with `sudo bash deploy/pi/cockpit/measure.sh PHASE`. Use `pre-install` after boot settles, `socket-idle` after all Cockpit login sessions and workers exit, and `browser-active` while logged into CPU and memory metrics. Keep Simulator traffic and other clients comparable. Report median host CPU busy percentage, available RAM and root filesystem byte delta. Report per-process RSS individually because shared pages may be counted in several processes. Record NetworkManager and udisks overhead alongside Cockpit if installed. Keep the APT transaction’s package footprint distinct from the root filesystem delta.
-- After reboot, compare boot IDs and verify enabled and active `zero-export-pi.service`, `nginx.service`, and `cockpit.socket`. Verify that Cockpit can launch on demand, then repeat Simulator acceptance, the full SQLite integrity check, the 115 backend tests and settings comparison. Confirm gateway and zero-export remain disabled.
+- After reboot, compare boot IDs and verify enabled and active `zero-export-pi.service`, `nginx.service`, and `cockpit.socket`. Verify that Cockpit can launch on demand, then repeat Simulator acceptance, the full SQLite integrity check, the 115 backend tests and settings comparison. Confirm gateway and zero-export remain disabled. With the live Simulator running, run the test suite in an isolated network namespace so that its test listeners can bind the expected ports. On the deployed Pi, run from `/opt/automatrix/zero-export-pi/backend`:
+
+  ```bash
+  unshare -Urn sh -c 'ip link set lo up && /opt/automatrix/node-pi-22/bin/node --test'
+  ```
 
 ## Rollback
 
