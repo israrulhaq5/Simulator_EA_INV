@@ -1,0 +1,5 @@
+add table inet automatrix_cockpit
+flush table inet automatrix_cockpit
+add chain inet automatrix_cockpit input { type filter hook input priority -10; policy accept; }
+add rule inet automatrix_cockpit input ip daddr @BIND_IP@ tcp dport 9090 iifname != "@LAN_INTERFACE@" counter drop
+add rule inet automatrix_cockpit input ip daddr @BIND_IP@ tcp dport 9090 ip saddr != @TRUSTED_LAN@ counter drop

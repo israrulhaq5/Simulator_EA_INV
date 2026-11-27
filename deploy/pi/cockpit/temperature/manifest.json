@@ -1,0 +1,6 @@
+{
+  "version": 0,
+  "menu": {
+    "index": { "label": "Board temperature", "order": 45 }
+  }
+}

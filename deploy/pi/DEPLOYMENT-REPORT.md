@@ -32,3 +32,34 @@ Deployed source: `a4eb1cc3b1271d6e261f76af880efdb144c824d7`. Dashboard: `http://
 - Installer remains fresh-install only. For partial installations preserve the SQLite database and inspect installed state before retrying.
 
 Next step: Reboot with operator approval, then verify the service starts automatically and rerun the on-board acceptance script.
+
+## Cockpit LAN verification
+
+2026-11-27, around 14:32 PKT. Cockpit was already answering before the optional installer in this branch was run. SSH reached the Pi and authenticated the known host, but available keys were rejected for both the default local account and root. The earlier SSH control socket was stale. The active package set, firewall rules, startup configuration and network backend could not be read over SSH. No board changes were made during this verification.
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Cockpit HTTPS on 9090 | PASS | LAN connection returned HTTP 200 over TLS. Plain HTTP redirected to HTTPS with HTTP 301. |
+| Certificate validation with default client trust | FAIL | The live endpoint presented a self-signed certificate that the client did not trust. The reachability probe used TLS without certificate validation and sent no credentials. |
+| Anonymous authentication gate | PASS | An unsigned-in request to `/cockpit/login` returned HTTP 401. |
+| Successful local authentication, admin permissions, trusted-LAN restriction | Pending | Requires authenticated access and a test from outside the allowed source or ingress path. |
+| CPU, RAM, storage and temperature pages | Pending | Requires an authenticated browser session. |
+| Ethernet and Wi-Fi management, static IP, DHCP, DNS and gateway | Pending | Requires network backend inspection and a test network profile. |
+| System services, Simulator start/stop/restart and automatic startup controls | Pending | Requires authenticated browser access and an on-board acceptance run. |
+| Logs, web terminal, reboot and shutdown | Pending | Requires an authenticated session. Shutdown also needs an available power-on path. |
+| Simulator on port 8080, SQLite readiness | PASS | Live readiness reported SQLite connected. |
+| Four simulator process states | PASS | Live API reported EM500, Huawei, Solis and Sungrow as running. A fresh Modbus register read awaits on-board access. |
+| Physical control disabled | PASS | Both gateway and zero-export reported disabled and stopped. |
+| Backend tests | PASS on Mac | 115/115. Earlier on-board 115/115 is recorded above. A fresh on-board run, full SQLite integrity check, and saved-settings comparison remain pending. |
+| Socket activation and post-reboot startup | Pending | Requires service state and boot ID before/after reboot. |
+| ARMv7 package selection and exclusions on the live Pi | Pending | The optional installer defines the package set and skips recommendations. The live package inventory requires board access. |
+
+### Resource comparison
+
+| Metric | Pre-install | Socket idle | Authenticated browser |
+| --- | --- | --- | --- |
+| CPU | No matched sample | Unmeasured | Unmeasured |
+| RAM | No matched sample | Unmeasured | Unmeasured |
+| Storage | No matched sample | Unmeasured | Unmeasured |
+
+The previous Simulator-only qualification above gives historical context. Its single-service CPU figure uses a different denominator from the host CPU samples in the Cockpit runbook and cannot support an overhead delta. See [the Cockpit runbook](COCKPIT.md) for the matched samples, installation and rollback.

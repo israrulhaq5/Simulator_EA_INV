@@ -1,0 +1,5 @@
+[Socket]
+ListenStream=
+ListenStream=@BIND_IP@:9090
+FreeBind=yes
+ExecStartPre=/usr/sbin/nft -f /etc/cockpit/automatrix-lan.nft
