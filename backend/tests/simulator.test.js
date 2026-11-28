@@ -188,15 +188,14 @@ test('simulator manager exposes every device and their values', async () => {
   assert.equal(getValues('huawei').length, 0);
   assert.equal(getValues('solis').length, 0);
   assert.equal(getValues('unknown').length, 0);
-  assert.equal(simulatorDevices.huawei.getStatus().port, 15021);
-  assert.equal(simulatorDevices.huawei.getStatus().unitId, 2);
-  assert.equal(simulatorDevices.em500.getStatus().port, 15020);
+  for (const key of ['em500', 'huawei', 'solis', 'sungrow']) {
+    assert.equal(simulatorDevices[key].getStatus().port, 502, `${key} uses the shared Modbus TCP port`);
+  }
   assert.equal(simulatorDevices.em500.getStatus().unitId, 1);
+  assert.equal(simulatorDevices.huawei.getStatus().unitId, 2);
   assert.equal(simulatorDevices.huawei.getStatus().deviceType, 'Huawei SUN2000 inverter');
-  assert.equal(simulatorDevices.solis.getStatus().port, 15022);
   assert.equal(simulatorDevices.solis.getStatus().unitId, 3);
   assert.equal(simulatorDevices.solis.getStatus().deviceType, 'Solis inverter');
-  assert.equal(simulatorDevices.sungrow.getStatus().port, 15023);
   assert.equal(simulatorDevices.sungrow.getStatus().unitId, 4);
   assert.equal(simulatorDevices.sungrow.getStatus().deviceType, 'Sungrow inverter');
 });
@@ -407,6 +406,11 @@ test('devices on the same port are served by unit ID (shared vector)', async () 
   );
 
   await em500.instance.stop();
+  assert.throws(
+    () => vector.getMultipleHoldingRegisters(0x0002, 2, 1),
+    (error) => error.modbusErrorCode === 0x0b,
+    'a stopped device on a shared port must not serve stale registers',
+  );
   await solis.instance.stop();
 });
 
@@ -525,5 +529,5 @@ test('simulator settings update syncs the linked EMS device unit ID and port', a
   assert.equal(updatedPatch.connection.port, 15024);
   // restore defaults
   await require('../src/simulator').stopDevice('sungrow');
-  simulatorDevices.sungrow.configure({ host: '0.0.0.0', port: 15023, unitId: 4, updateIntervalMs: 1000 });
+  simulatorDevices.sungrow.configure({ host: '0.0.0.0', port: 502, unitId: 4, updateIntervalMs: 1000 });
 });
