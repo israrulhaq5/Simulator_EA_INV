@@ -4,6 +4,22 @@ function clamp(value, minimum, maximum) {
   return Math.min(maximum, Math.max(minimum, Number(value)));
 }
 
+function clampToRegisterRange(value, register) {
+  if (typeof value !== 'number' || !Number.isFinite(value)) return value;
+  const ranges = {
+    INT16: [-32768, 32767],
+    UINT16: [0, 65535],
+    INT32: [-2147483648, 2147483647],
+    UINT32: [0, 4294967295],
+  };
+  const range = ranges[register.dataType];
+  if (!range) return value;
+  const scale = Number(register.scaleFactor) || 1;
+  const offset = Number(register.offset) || 0;
+  const raw = Math.round((value - offset) / scale);
+  return clamp(raw, range[0], range[1]) * scale + offset;
+}
+
 function createGenericInverterModel(profile) {
   const simulator = profile.metadata?.simulator || {};
   return {
@@ -142,6 +158,10 @@ function valueForRegister(device, register, context) {
   }
 
   if (/fault|alarm|warning|error|trip|diagnostic|debug/.test(label)) return 0;
+  if (/sunspec.*id/.test(label)) {
+    const magic = description.match(/0x([0-9a-f]+)/i);
+    return magic ? Number.parseInt(magic[1], 16) : 0x53756e53;
+  }
   if (/system_state/.test(key)) return 2;
   if (/status|state|mode/.test(label)) return context.running ? 1 : 2;
   if (/model_id/.test(key)) {
@@ -149,6 +169,12 @@ function valueForRegister(device, register, context) {
     return modelId ? Number(modelId[1]) : 1;
   }
   if (/serial|product_model_number|device_type|modbus_address/.test(key)) return 1;
+  if (/aging_test_ok/.test(key)) return 1;
+  if (/pviso/.test(key)) return 1200;
+  if (/pid_bus/.test(key)) return context.pvVoltage * 1.4;
+  if (/ct_i_[rst]/.test(key)) return context.phaseCurrent;
+  if (/ct_har_i_[rst]|comp_har_i_[rst]/.test(key)) return context.phaseCurrent * 0.05;
+  if (/[rst]_dci/.test(key)) return 150;
   if (/power[_ ]factor|\bpf\b/.test(label)) return context.powerFactor;
   if (/frequency|freq/.test(label)) return context.frequency;
   if (/temperature|temp/.test(label)) return 42.3;
@@ -192,11 +218,18 @@ function valueForRegister(device, register, context) {
     return context.phaseCurrent;
   }
 
+  if (/(rated|nominal|max(?:imum)?)/.test(label) && /power/.test(label)) {
+    return unitValue(context.ratingKw, unit);
+  }
   if (/apparent_power|apparent power/.test(label)) {
-    return unitValue(context.outputKw / context.powerFactor, unit);
+    const value = unitValue(context.outputKw / context.powerFactor, unit);
+    const pairValue = splitHighLow(register, value);
+    return pairValue === null ? value : pairValue;
   }
   if (/reactive_power|reactive power/.test(label)) {
-    return unitValue(context.outputKw * 0.08, unit);
+    const value = unitValue(context.outputKw * 0.08, unit);
+    const pairValue = splitHighLow(register, value);
+    return pairValue === null ? value : pairValue;
   }
   if (/active_power|active power|output_power|output power|pac\b/.test(label)) {
     let kw = context.outputKw;
@@ -216,10 +249,6 @@ function valueForRegister(device, register, context) {
     const pairValue = splitHighLow(register, value);
     return pairValue === null ? value : pairValue;
   }
-  if (/rated|nominal/.test(label) && /power/.test(label)) {
-    return unitValue(context.ratingKw, unit);
-  }
-
   return 0;
 }
 
@@ -279,7 +308,7 @@ function computeGenericInverter(device) {
   return Object.fromEntries(
     device.profile.registers.map((register) => [
       register.key,
-      valueForRegister(device, register, context),
+      clampToRegisterRange(valueForRegister(device, register, context), register),
     ]),
   );
 }

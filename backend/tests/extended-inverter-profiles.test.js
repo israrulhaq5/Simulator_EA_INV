@@ -122,6 +122,25 @@ test('all six profiles generate telemetry and serve FC03/FC04 reads by unit ID',
       }
     }
 
+    const foxess = simulatorDevices.foxess;
+    const sunSpecId = foxess.profile.registers.find((register) => /SunSpec ID/.test(register.name));
+    const model707 = foxess.profile.registers.find((register) => register.key.includes('model_id_707'));
+    const model708 = foxess.profile.registers.find((register) => register.key.includes('model_id_708'));
+    assert.equal(foxess.values.get(sunSpecId.key).value, 0x53756e53);
+    assert.equal(foxess.values.get(model707.key).value, 707);
+    assert.equal(foxess.values.get(model708.key).value, 708);
+
+    const disabledFoxRegister = foxess.profile.registers.find((register) => register.enabled === false);
+    assert.throws(
+      () => vector.getMultipleHoldingRegisters(
+        disabledFoxRegister.address,
+        disabledFoxRegister.length,
+        foxess.configuration.unitId,
+      ),
+      (error) => error.modbusErrorCode === 0x02,
+      'manual-overlap registers must not be served as live data',
+    );
+
     const wrongUnit = simulatorDevices.sofar.profile.registers.find(
       (register) => register.registerType === 'HOLDING_REGISTER',
     );

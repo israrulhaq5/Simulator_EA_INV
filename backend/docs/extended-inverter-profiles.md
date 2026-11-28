@@ -49,7 +49,7 @@ Other profiles retain the raw addresses published in their supplied register tab
 - The meter's grid-point calculation includes output from all nine inverter simulators.
 - Registers explicitly marked disabled are not populated or writable. The generic device defaults to exception responses for unmapped gaps rather than inventing zero-valued registers.
 
-The generic model produces continuously varying telemetry for integration and acceptance testing. It is not a firmware-exact electrical model; site commissioning against each physical inverter remains a separate validation step.
+The generic model produces continuously varying telemetry for integration and acceptance testing. Generated numeric values are bounded to each register's declared integer range before encoding. It is not a firmware-exact electrical model; site commissioning against each physical inverter remains a separate validation step.
 
 ## Port 502 permissions
 
