@@ -220,7 +220,7 @@ test('legacy simulator ports migrate to shared Modbus TCP 502 and linked EMS dev
     linked[`${key}-simulator`] = {
       _id: key,
       identifier: `${key}-simulator`,
-      unitId: status.unitId,
+      unitId: status.unitId + 10,
       connection: { protocol: 'TCP', host: '127.0.0.1', port: legacyPorts[key] },
     };
   }
