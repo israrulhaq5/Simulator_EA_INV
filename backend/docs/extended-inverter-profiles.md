@@ -36,7 +36,7 @@ The register validator checks unique keys and start addresses. Regression tests 
 
 ## Address conventions
 
-The FoxESS manual publishes SunSpec reference addresses such as 40001. The simulator's Modbus vector uses the address field sent in the Modbus PDU, so FoxESS profile addresses are normalized by subtracting one from the manual reference address. The original manufacturer address remains in each register description and the profile metadata records addressOffset = -1.
+The FoxESS manual publishes SunSpec reference addresses such as 40001. The simulator's Modbus vector uses the address field sent in the Modbus PDU, so FoxESS profile addresses are normalized by subtracting one from the manual reference address. The original manufacturer address remains in each register description and the profile metadata records addressOffset = -1. The simulator returns the SunSpec identifier 0x53756e53, the manual's model IDs and the published model-length fields so clients can walk the documented model chain.
 
 Other profiles retain the raw addresses published in their supplied register tables.
 

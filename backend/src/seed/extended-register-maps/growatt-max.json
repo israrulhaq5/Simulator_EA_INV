@@ -22348,7 +22348,7 @@
       "enabled": true,
       "sortOrder": 210,
       "unit": "Var",
-      "description": "Input register 210: CT reactive-power word R high, 0.1Var resolution."
+      "description": "Input register 210: CT reactive power word R high, 0.1Var resolution."
     },
     {
       "key": "ct_q_r_l_00d3_ir",
@@ -22367,7 +22367,7 @@
       "enabled": true,
       "sortOrder": 211,
       "unit": "Var",
-      "description": "Input register 211: CT reactive-power word R low, 0.1Var resolution."
+      "description": "Input register 211: CT reactive power word R low, 0.1Var resolution."
     },
     {
       "key": "ct_q_s_h_00d4_ir",
@@ -22386,7 +22386,7 @@
       "enabled": true,
       "sortOrder": 212,
       "unit": "Var",
-      "description": "Input register 212: CT reactive-power word S high, 0.1Var resolution."
+      "description": "Input register 212: CT reactive power word S high, 0.1Var resolution."
     },
     {
       "key": "ct_q_s_l_00d5_ir",
@@ -22405,7 +22405,7 @@
       "enabled": true,
       "sortOrder": 213,
       "unit": "Var",
-      "description": "Input register 213: CT reactive-power word S low, 0.1Var resolution."
+      "description": "Input register 213: CT reactive power word S low, 0.1Var resolution."
     },
     {
       "key": "ct_q_t_h_00d6_ir",
@@ -22424,7 +22424,7 @@
       "enabled": true,
       "sortOrder": 214,
       "unit": "Var",
-      "description": "Input register 214: CT reactive-power word T high, 0.1Var resolution."
+      "description": "Input register 214: CT reactive power word T high, 0.1Var resolution."
     },
     {
       "key": "ct_q_t_l_00d7_ir",
@@ -22443,7 +22443,7 @@
       "enabled": true,
       "sortOrder": 215,
       "unit": "Var",
-      "description": "Input register 215: CT reactive-power word T low, 0.1Var resolution."
+      "description": "Input register 215: CT reactive power word T low, 0.1Var resolution."
     },
     {
       "key": "ct_har_i_r_00d8_ir",
@@ -22519,7 +22519,7 @@
       "enabled": true,
       "sortOrder": 219,
       "unit": "Var",
-      "description": "Input register 219: compensated reactive-power word R high, 0.1Var resolution."
+      "description": "Input register 219: compensated reactive power word R high, 0.1Var resolution."
     },
     {
       "key": "comp_q_r_l_00dc_ir",
@@ -22538,7 +22538,7 @@
       "enabled": true,
       "sortOrder": 220,
       "unit": "Var",
-      "description": "Input register 220: compensated reactive-power word R low, 0.1Var resolution."
+      "description": "Input register 220: compensated reactive power word R low, 0.1Var resolution."
     },
     {
       "key": "comp_q_s_h_00dd_ir",
@@ -22557,7 +22557,7 @@
       "enabled": true,
       "sortOrder": 221,
       "unit": "Var",
-      "description": "Input register 221: compensated reactive-power word S high, 0.1Var resolution."
+      "description": "Input register 221: compensated reactive power word S high, 0.1Var resolution."
     },
     {
       "key": "comp_q_s_l_00de_ir",
@@ -22576,7 +22576,7 @@
       "enabled": true,
       "sortOrder": 222,
       "unit": "Var",
-      "description": "Input register 222: compensated reactive-power word S low, 0.1Var resolution."
+      "description": "Input register 222: compensated reactive power word S low, 0.1Var resolution."
     },
     {
       "key": "comp_q_t_h_00df_ir",
@@ -22595,7 +22595,7 @@
       "enabled": true,
       "sortOrder": 223,
       "unit": "Var",
-      "description": "Input register 223: compensated reactive-power word T high, 0.1Var resolution."
+      "description": "Input register 223: compensated reactive power word T high, 0.1Var resolution."
     },
     {
       "key": "comp_q_t_l_00e0_ir",
@@ -22614,7 +22614,7 @@
       "enabled": true,
       "sortOrder": 224,
       "unit": "Var",
-      "description": "Input register 224: compensated reactive-power word T low, 0.1Var resolution."
+      "description": "Input register 224: compensated reactive power word T low, 0.1Var resolution."
     },
     {
       "key": "comp_har_i_r_00e1_ir",
@@ -22726,7 +22726,7 @@
       "enabled": true,
       "sortOrder": 230,
       "unit": "W",
-      "description": "Input register 230: apparent-power high word, 0.1W resolution."
+      "description": "Input register 230: apparent power high word, 0.1W resolution."
     },
     {
       "key": "sac_l_output_apparent_power_00e7_ir",
@@ -22745,7 +22745,7 @@
       "enabled": true,
       "sortOrder": 231,
       "unit": "W",
-      "description": "Input register 231: apparent-power low word, 0.1W resolution."
+      "description": "Input register 231: apparent power low word, 0.1W resolution."
     },
     {
       "key": "dsp067_debug1_h_010b_hr",

@@ -135,7 +135,7 @@ function valueForRegister(device, register, context) {
     return source.slice(start, start + register.length * 2);
   }
 
-  if (register.writable) {
+  if (register.writable && !/model_id|number_of_the_following/.test(key)) {
     if (register.key === simulator.powerControlKey) {
       return simulator.powerControlMode === 'absolute-watts'
         ? model.fixedPowerLimitKw * 1000
@@ -162,6 +162,12 @@ function valueForRegister(device, register, context) {
     const magic = description.match(/0x([0-9a-f]+)/i);
     return magic ? Number.parseInt(magic[1], 16) : 0x53756e53;
   }
+  if (/number of the following modbus registers|model length|sunspec.*length/.test(label)) {
+    const length = description.match(/\(l\)\s*:\s*(\d+)/i);
+    return length ? Number(length[1]) : 0;
+  }
+  if (/end.*model.*id/.test(label)) return 0xffff;
+  if (/end.*model.*length/.test(label)) return 0;
   if (/system_state/.test(key)) return 2;
   if (/status|state|mode/.test(label)) return context.running ? 1 : 2;
   if (/model_id/.test(key)) {
