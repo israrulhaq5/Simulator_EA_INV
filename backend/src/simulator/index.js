@@ -6,6 +6,7 @@ const { EM500_PROFILE } = require('../seed/em500.profile');
 const { HUAWEI_SUN2000_PROFILE } = require('../seed/huawei-sun2000.profile');
 const { SOLIS_PROFILE } = require('../seed/solis-inverter.profile');
 const { SUNGROW_PROFILE } = require('../seed/sungrow-inverter.profile');
+const { EXTENDED_INVERTER_PROFILES } = require('../seed/extended-inverter-profiles');
 
 const MODBUS_TCP_PORT = 502;
 const LEGACY_DEFAULT_PORTS = Object.freeze({
@@ -197,7 +198,7 @@ async function startAll() {
   }
   // Start the inverters before the meter so the coupled meter's first tick
   // already sees every inverter's output (grid = load - inverters).
-  const order = ['huawei', 'solis', 'sungrow', 'em500'];
+  const order = ['huawei', 'solis', 'sungrow', 'sofar', 'growatt', 'deye', 'foxess', 'goodwe', 'esinv', 'em500'];
   const orderedGroups = [];
   for (const key of order) {
     const groupKey = portKeyOf(simulatorDevices[key]);
