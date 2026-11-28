@@ -7,14 +7,22 @@ const { HUAWEI_SUN2000_PROFILE } = require('../seed/huawei-sun2000.profile');
 const { SOLIS_PROFILE } = require('../seed/solis-inverter.profile');
 const { SUNGROW_PROFILE } = require('../seed/sungrow-inverter.profile');
 
+const MODBUS_TCP_PORT = 502;
+const LEGACY_DEFAULT_PORTS = Object.freeze({
+  em500: 15020,
+  huawei: 15021,
+  solis: 15022,
+  sungrow: 15023,
+});
+
 /**
  * Simulator farm: one or more Modbus TCP slaves.
  *
  * Devices that share the same host:port are served by ONE shared TCP server
  * and are distinguished by unit ID — exactly like an RS485 bus bridged over
- * TCP. Default layout: EM500 meter (15020/unit 1), Huawei SUN2000 inverter
- * (15021/unit 2), Solis inverter (15022/unit 3); any of them can be moved to
- * the same port via the UI/API as long as unit IDs stay unique.
+ * TCP. All built-in devices share the standard Modbus TCP port 502 and are
+ * distinguished by unique unit IDs: EM500 meter (unit 1), Huawei SUN2000
+ * inverter (unit 2), Solis inverter (unit 3), and Sungrow inverter (unit 4).
  */
 const simulatorDevices = Object.freeze({
   em500: new SimulatorDevice({
@@ -23,7 +31,7 @@ const simulatorDevices = Object.freeze({
     profile: EM500_PROFILE,
     defaultConfiguration: {
       host: '0.0.0.0',
-      port: 15020,
+      port: MODBUS_TCP_PORT,
       unitId: 1,
       updateIntervalMs: 1000,
       options: {
@@ -37,7 +45,7 @@ const simulatorDevices = Object.freeze({
     profile: HUAWEI_SUN2000_PROFILE,
     defaultConfiguration: {
       host: '0.0.0.0',
-      port: 15021,
+      port: MODBUS_TCP_PORT,
       unitId: 2,
       updateIntervalMs: 1000,
       options: {
@@ -53,7 +61,7 @@ const simulatorDevices = Object.freeze({
     profile: SOLIS_PROFILE,
     defaultConfiguration: {
       host: '0.0.0.0',
-      port: 15022,
+      port: MODBUS_TCP_PORT,
       unitId: 3,
       updateIntervalMs: 1000,
       options: {
@@ -69,7 +77,7 @@ const simulatorDevices = Object.freeze({
     profile: SUNGROW_PROFILE,
     defaultConfiguration: {
       host: '0.0.0.0',
-      port: 15023,
+      port: MODBUS_TCP_PORT,
       unitId: 4,
       updateIntervalMs: 1000,
       options: {
@@ -107,8 +115,8 @@ function buildSharedVector(devices) {
   const call = (fnName, args) => {
     const unitId = args[args.length - 1];
     const device = byUnit.get(unitId) || (unitId === 0 ? devices[0] : undefined);
-    if (!device) {
-      throw modbusError(`No simulated device on unit ${unitId}.`, 0x0b);
+    if (!device || device.getStatus().state !== 'RUNNING') {
+      throw modbusError(`No running simulated device on unit ${unitId}.`, 0x0b);
     }
     return device.createVector()[fnName](...args);
   };
@@ -243,22 +251,78 @@ async function stopDevice(key) {
 }
 
 /** Apply persisted settings (port, unit ID, options) to every device. */
-async function applyPersistedSettings(settingsRepository) {
+async function applyPersistedSettings(settingsRepository, deviceRepository) {
   const results = [];
   for (const key of Object.keys(simulatorDevices)) {
+    let applied = false;
+    let migratedPort = false;
+    let linkedDeviceSynced = false;
+    let errorMessage = null;
+
     try {
       const saved = await settingsRepository.get(key);
       if (saved) {
         const { key: ignoredKey, createdAt, updatedAt, _id, ...settings } = saved;
         void ignoredKey; void createdAt; void updatedAt; void _id;
+
+        // Migrate only the four old built-in defaults. Operator-selected ports
+        // are preserved, while old linked EMS records are synchronized below.
+        if (settings.port === LEGACY_DEFAULT_PORTS[key]) {
+          settings.port = MODBUS_TCP_PORT;
+          migratedPort = true;
+        }
+
         simulatorDevices[key].configure(settings);
-        results.push({ key, applied: true });
-      } else {
-        results.push({ key, applied: false });
+        applied = true;
+
+        if (migratedPort) {
+          await settingsRepository.save(key, settings);
+        }
       }
     } catch (error) {
-      results.push({ key, applied: false, error: error.message });
+      errorMessage = error.message;
     }
+
+    // Keep the EMS polling records on the same port/unit ID as their simulator.
+    // This also fixes existing installations that have no saved simulator
+    // settings but still have linked device records using the old ports.
+    if (deviceRepository) {
+      try {
+        const status = simulatorDevices[key].getStatus();
+        const linked = await deviceRepository.findOne({
+          identifier: `${key}-simulator`,
+        });
+        if (linked) {
+          const patch = {};
+          if (linked.unitId !== status.unitId) {
+            patch.unitId = status.unitId;
+          }
+          if (linked.connection?.port !== status.port) {
+            patch.connection = {
+              protocol: linked.connection?.protocol || 'TCP',
+              host: linked.connection?.host || '127.0.0.1',
+              port: status.port,
+            };
+          }
+          if (Object.keys(patch).length > 0) {
+            await deviceRepository.updateById(linked._id, patch);
+            linkedDeviceSynced = true;
+          }
+        }
+      } catch (error) {
+        errorMessage = errorMessage
+          ? `${errorMessage}; linked device sync: ${error.message}`
+          : `linked device sync: ${error.message}`;
+      }
+    }
+
+    results.push({
+      key,
+      applied,
+      ...(migratedPort ? { migratedPort: true } : {}),
+      ...(linkedDeviceSynced ? { linkedDeviceSynced: true } : {}),
+      ...(errorMessage ? { error: errorMessage } : {}),
+    });
   }
   return results;
 }
