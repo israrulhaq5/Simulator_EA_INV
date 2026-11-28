@@ -200,6 +200,59 @@ test('simulator manager exposes every device and their values', async () => {
   assert.equal(simulatorDevices.sungrow.getStatus().deviceType, 'Sungrow inverter');
 });
 
+test('legacy simulator ports migrate to shared Modbus TCP 502 and linked EMS devices sync', async () => {
+  const { applyPersistedSettings, simulatorDevices } = require('../src/simulator');
+  const keys = ['em500', 'huawei', 'solis', 'sungrow'];
+  const legacyPorts = { em500: 15020, huawei: 15021, solis: 15022, sungrow: 15023 };
+  const saved = {};
+  const linked = {};
+  const savedWrites = {};
+  const linkedWrites = {};
+
+  for (const key of keys) {
+    const status = simulatorDevices[key].getStatus();
+    saved[key] = {
+      port: legacyPorts[key],
+      unitId: status.unitId,
+      updateIntervalMs: status.updateIntervalMs,
+      options: status.options,
+    };
+    linked[`${key}-simulator`] = {
+      _id: key,
+      identifier: `${key}-simulator`,
+      unitId: status.unitId,
+      connection: { protocol: 'TCP', host: '127.0.0.1', port: legacyPorts[key] },
+    };
+  }
+
+  const settingsRepository = {
+    get: async (key) => saved[key] || null,
+    save: async (key, settings) => {
+      savedWrites[key] = settings;
+      saved[key] = settings;
+      return settings;
+    },
+  };
+  const deviceRepository = {
+    findOne: async ({ identifier }) => linked[identifier] || null,
+    updateById: async (id, patch) => {
+      linkedWrites[id] = patch;
+      return { ...linked[id + '-simulator'], ...patch };
+    },
+  };
+
+  const results = await applyPersistedSettings(settingsRepository, deviceRepository);
+
+  for (const key of keys) {
+    assert.equal(simulatorDevices[key].getStatus().port, 502);
+    assert.equal(savedWrites[key].port, 502, `${key} persisted port migrated`);
+    assert.equal(linkedWrites[key].connection.port, 502, `${key} linked EMS port synchronized`);
+    assert.equal(linkedWrites[key].unitId, simulatorDevices[key].getStatus().unitId);
+  }
+  assert.equal(results.filter((result) => result.migratedPort).length, 4);
+  assert.equal(results.filter((result) => result.linkedDeviceSynced).length, 4);
+});
+
 test('Solis simulator serves FC04 inputs and accepts active power limit writes', async () => {
   const { instance } = device({
     profile: SOLIS_PROFILE,
