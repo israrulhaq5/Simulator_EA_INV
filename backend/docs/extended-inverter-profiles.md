@@ -28,7 +28,7 @@ The six profile maps are seeded as built-ins and versioned at profile version 2.
 | SOFAR 110KTL | 1,906 | Named workbook entries are mapped; the explicit reserved Production_Code slot is omitted. Four Super-admin password words are represented as read-only zero placeholders. |
 | Growatt MAX 50–100K | 1,284 | Adds the omitted inverter diagnostics, debug words, control settings and three-phase AC measurements. SPH4–11K/SPA-only storage blocks, reserved addresses and ranges marked no-use are excluded from the MAX profile. |
 | Deye / NITROX 50kW | 254 | Includes Meter Enable. The supplied document is V1.34; its register table identifies revision V1.33. |
-| FoxESS R/V/H3plus | 557 | Includes SunSpec model IDs 707 and 708. Three overlapping Act Pt U32 entries from the supplied manual are retained but disabled because each two-word span collides with the next Dept Ref address. |
+| FoxESS R/V/H3plus | 559 | Includes SunSpec model IDs 707 and 708. Three overlapping Act Pt U32 entries from the supplied manual are retained but disabled because each two-word span collides with the next Dept Ref address. Model 701 length is reconciled to 153 (the manual prints 31, but Model 702 starts at manual address 40226); the required 0xFFFF/0 end marker is appended. |
 | GoodWe Hybrid EN / 3EM | 154 | Includes the supplied ASCII and multi-register fields. |
 | ESINV-33000ID | 768 | Includes the supplied runtime input-register and configuration holding-register tables. |
 
@@ -36,7 +36,7 @@ The register validator checks unique keys and start addresses. Regression tests 
 
 ## Address conventions
 
-The FoxESS manual publishes SunSpec reference addresses such as 40001. The simulator's Modbus vector uses the address field sent in the Modbus PDU, so FoxESS profile addresses are normalized by subtracting one from the manual reference address. The original manufacturer address remains in each register description and the profile metadata records addressOffset = -1. The simulator returns the SunSpec identifier 0x53756e53, the manual's model IDs and the published model-length fields so clients can walk the documented model chain.
+The FoxESS manual publishes SunSpec reference addresses such as 40001. The simulator's Modbus vector uses the address field sent in the Modbus PDU, so FoxESS profile addresses are normalized by subtracting one from the manual reference address. The original manufacturer address remains in each register description and the profile metadata records addressOffset = -1. Independent cross-check: https://github.com/HarshBhardwaj/foxess-local/blob/main/docs/02-frontend-decoder-and-register-map.md. The simulator returns the SunSpec identifier 0x53756e53, the manual's model IDs and model-length fields, plus the required 0xFFFF/0 end marker. Model 701 length is set to 153 based on the next model's documented start address and an independent decoded FoxESS map; this differs from the V1.07 manual's printed value of 31.
 
 Other profiles retain the raw addresses published in their supplied register tables.
 

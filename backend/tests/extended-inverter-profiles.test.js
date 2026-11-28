@@ -130,15 +130,19 @@ test('all six profiles generate telemetry and serve FC03/FC04 reads by unit ID',
     const model701Length = foxess.profile.registers.find((register) => register.address === 40071);
     const model707Length = foxess.profile.registers.find((register) => register.address === 40535);
     const model708Length = foxess.profile.registers.find((register) => register.address === 40593);
+    const endModelId = foxess.profile.registers.find((register) => register.address === 40958);
+    const endModelLength = foxess.profile.registers.find((register) => register.address === 40959);
     const model703 = foxess.profile.registers.find((register) => register.key.includes('model_id_703'));
     const model704 = foxess.profile.registers.find((register) => register.key.includes('model_id_704'));
     assert.equal(foxess.values.get(sunSpecId.key).value, 0x53756e53);
     assert.equal(foxess.values.get(commonLength.key).value, 66);
-    assert.equal(foxess.values.get(model701Length.key).value, 31);
+    assert.equal(foxess.values.get(model701Length.key).value, 153);
     assert.equal(foxess.values.get(model707.key).value, 707);
     assert.equal(foxess.values.get(model708.key).value, 708);
     assert.equal(foxess.values.get(model707Length.key).value, 56);
     assert.equal(foxess.values.get(model708Length.key).value, 56);
+    assert.equal(foxess.values.get(endModelId.key).value, 0xffff);
+    assert.equal(foxess.values.get(endModelLength.key).value, 0);
     assert.equal(foxess.values.get(model703.key).value, 703);
     assert.equal(foxess.values.get(model704.key).value, 704);
 
