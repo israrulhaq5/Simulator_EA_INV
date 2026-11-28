@@ -62,7 +62,7 @@ const SOFAR_110KTL_PROFILE = makeProfile(
   'SOFAR 110KTL inverter',
   SOFAR_MAP,
   {
-    sourceUrl: 'https://docs.google.com/spreadsheets/d/1w7n2BHKOBV-zs1enzNzO2Y86zRo8TqDp/edit',
+    sourceUrl: 'https://drive.google.com/file/d/1w7n2BHKOBV-zs1enzNzO2Y86zRo8TqDp/view',
     powerControlKey: keyAt(SOFAR_MAP.registers, 2305),
     powerControlEnableKey: keyAt(SOFAR_MAP.registers, 2304),
     remoteOnOffKey: keyAt(SOFAR_MAP.registers, 2304),

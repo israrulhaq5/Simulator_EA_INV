@@ -1,7 +1,7 @@
 {
   "manufacturer": "Growatt",
   "model": "MAX 50-100K",
-  "source": "Growatt MAX Inverter Modbus RTU Protocol II V1.13 — full FC03 holding and FC04 input tables",
+  "source": "Growatt MAX Inverter Modbus RTU Protocol II V1.13 — model-applicable FC03 holding and FC04 input tables (diagnostic, control and AC measurement entries; SPH/SPA-only storage blocks excluded)",
   "ratingKw": 100,
   "registers": [
     {
