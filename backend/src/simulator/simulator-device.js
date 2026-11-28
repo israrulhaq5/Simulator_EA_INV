@@ -5,6 +5,7 @@ const logger = require('../config/logger');
 const { REGISTER_TYPES } = require('../constants/modbus');
 const { encodeRegister } = require('../modbus/register-encoder');
 const { decodeRegister } = require('../modbus/register-decoder');
+const { createGenericInverterModel, computeGenericInverter, applyGenericInverterWrite } = require('./generic-inverter');
 
 const SIMULATOR_STATES = Object.freeze({
   STOPPED: 'STOPPED',
