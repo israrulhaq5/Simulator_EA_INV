@@ -380,7 +380,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1047,
-      "unit": "Second",
+      "unit": "s",
       "description": "Boot countdown"
     },
     {
@@ -399,7 +399,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1048,
-      "unit": "℃",
+      "unit": "°C",
       "description": "ambient temperature1"
     },
     {
@@ -418,7 +418,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1049,
-      "unit": "℃",
+      "unit": "°C",
       "description": "ambient temperature2"
     },
     {
@@ -437,7 +437,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1050,
-      "unit": "℃",
+      "unit": "°C",
       "description": "radiator temperature1"
     },
     {
@@ -456,7 +456,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1051,
-      "unit": "℃",
+      "unit": "°C",
       "description": "radiator temperature2"
     },
     {
@@ -475,7 +475,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1052,
-      "unit": "℃",
+      "unit": "°C",
       "description": "radiator temperature3"
     },
     {
@@ -494,7 +494,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1053,
-      "unit": "℃",
+      "unit": "°C",
       "description": "radiator temperature4"
     },
     {
@@ -513,7 +513,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1054,
-      "unit": "℃",
+      "unit": "°C",
       "description": "radiator temperature5"
     },
     {
@@ -532,7 +532,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1055,
-      "unit": "℃",
+      "unit": "°C",
       "description": "radiator temperature6"
     },
     {
@@ -551,7 +551,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1056,
-      "unit": "℃",
+      "unit": "°C",
       "description": "module temperature1"
     },
     {
@@ -570,7 +570,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1057,
-      "unit": "℃",
+      "unit": "°C",
       "description": "module temperature2"
     },
     {
@@ -589,7 +589,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1058,
-      "unit": "℃",
+      "unit": "°C",
       "description": "module temperature3"
     },
     {
@@ -608,7 +608,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1059,
-      "unit": "℃",
+      "unit": "°C",
       "description": "reserved temperature1"
     },
     {
@@ -627,7 +627,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1060,
-      "unit": "℃",
+      "unit": "°C",
       "description": "reserved temperature2"
     },
     {
@@ -646,7 +646,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1061,
-      "unit": "℃",
+      "unit": "°C",
       "description": "reserved temperature3"
     },
     {
@@ -665,7 +665,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1062,
-      "unit": "minutes",
+      "unit": "min",
       "description": "Generation time of the day"
     },
     {
@@ -684,7 +684,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1063,
-      "unit": "minutes",
+      "unit": "min",
       "description": "total generation time"
     },
     {
@@ -703,7 +703,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1065,
-      "unit": "minutes",
+      "unit": "min",
       "description": "total running time"
     },
     {
@@ -3908,7 +3908,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1543,
-      "unit": "℃",
+      "unit": "°C",
       "description": "No.1Ambient temperature of battery pack"
     },
     {
@@ -4041,7 +4041,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1550,
-      "unit": "℃",
+      "unit": "°C",
       "description": "No.2-way battery pack ambient temperature"
     },
     {
@@ -4174,7 +4174,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1557,
-      "unit": "℃",
+      "unit": "°C",
       "description": "No.3-way battery pack ambient temperature"
     },
     {
@@ -4307,7 +4307,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1564,
-      "unit": "℃",
+      "unit": "°C",
       "description": "No.4-way battery pack ambient temperature"
     },
     {
@@ -4440,7 +4440,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1571,
-      "unit": "℃",
+      "unit": "°C",
       "description": "No.5-way battery pack ambient temperature"
     },
     {
@@ -4573,7 +4573,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1578,
-      "unit": "℃",
+      "unit": "°C",
       "description": "No.Ambient temperature of 6-way battery pack"
     },
     {
@@ -4706,7 +4706,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1585,
-      "unit": "℃",
+      "unit": "°C",
       "description": "No.7-way battery pack ambient temperature"
     },
     {
@@ -4839,7 +4839,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1592,
-      "unit": "℃",
+      "unit": "°C",
       "description": "No.8-way battery pack ambient temperature"
     },
     {
@@ -4990,7 +4990,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1607,
-      "unit": "℃",
+      "unit": "°C",
       "description": "Ambient temperature of the 9th battery pack"
     },
     {
@@ -5123,7 +5123,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1614,
-      "unit": "℃",
+      "unit": "°C",
       "description": "Ambient temperature of the 10th battery pack"
     },
     {
@@ -5256,7 +5256,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1621,
-      "unit": "℃",
+      "unit": "°C",
       "description": "Ambient temperature of the 11th battery pack"
     },
     {
@@ -5389,7 +5389,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1628,
-      "unit": "℃",
+      "unit": "°C",
       "description": "Ambient temperature of the 12th battery pack"
     },
     {
@@ -8364,7 +8364,7 @@
       "writable": true,
       "enabled": true,
       "sortOrder": 2048,
-      "unit": "Second",
+      "unit": "s",
       "description": "Waiting time before grid connection; Range: 1..65535"
     },
     {
@@ -8402,7 +8402,7 @@
       "writable": true,
       "enabled": true,
       "sortOrder": 2050,
-      "unit": "Second",
+      "unit": "s",
       "description": "Waiting time before grid reconnection after power grid fault recovery; Range: 1..65535"
     },
     {
@@ -10732,7 +10732,7 @@
       "writable": true,
       "enabled": true,
       "sortOrder": 2464,
-      "unit": "Second",
+      "unit": "s",
       "description": "for reactive power (1,2,3,4,5,6) to set the reactive power adjustment time; Range: 1..65535"
     },
     {
@@ -11525,7 +11525,7 @@
       "writable": true,
       "enabled": true,
       "sortOrder": 4103,
-      "unit": "hour",
+      "unit": "h",
       "description": "system time-Hour; Range: 0..23"
     },
     {
@@ -11563,7 +11563,7 @@
       "writable": true,
       "enabled": true,
       "sortOrder": 4105,
-      "unit": "Second",
+      "unit": "s",
       "description": "system time-Second; Range: 0..59"
     },
     {
@@ -12087,7 +12087,7 @@
       "writable": true,
       "enabled": true,
       "sortOrder": 4134,
-      "unit": "minute",
+      "unit": "min",
       "description": "IVCurve scan cycle; Range: 5..65535"
     },
     {
@@ -12160,7 +12160,7 @@
       "writable": true,
       "enabled": true,
       "sortOrder": 4138,
-      "unit": "Second",
+      "unit": "s",
       "description": "Waiting time for emergency power supply startup (reserved function); Range: 0..65535"
     },
     {
@@ -13526,7 +13526,7 @@
       "writable": true,
       "enabled": true,
       "sortOrder": 4484,
-      "unit": "Second",
+      "unit": "s",
       "description": "passive mode-timeout control; default:0; Set the passive mode communication timeout time, when the inverter does not receive any communication within the time set by this register, the inverter will enforce the timeout action. Special, write to this register0The timeout function will be disabled.; Range: 0..65535"
     },
     {
@@ -13848,7 +13848,7 @@
       "writable": true,
       "enabled": true,
       "sortOrder": 4517,
-      "unit": "Second",
+      "unit": "s",
       "description": "Scheduler mode applies the start time of the expected parameter setting value; StartTime is in unix time format, because the system internal time defaults to Greenwich Mean Time (GMT), so when setting this parameter, you should pay attention to the local time zone of the country where you are located, StartTime=(local Unix Time) ± (the number of seconds corresponding to the time difference between local time and UTC/GMT); Range: 0..4294967296"
     },
     {
@@ -13867,7 +13867,7 @@
       "writable": true,
       "enabled": true,
       "sortOrder": 4519,
-      "unit": "Second",
+      "unit": "s",
       "description": "SchedulerThe duration for which the mode applies the desired parameter setpoint(DurationTime); Range: 0..4294967296"
     },
     {
@@ -28642,7 +28642,7 @@
       "writable": true,
       "enabled": true,
       "sortOrder": 32779,
-      "unit": "minute",
+      "unit": "min",
       "description": "Generation time of the day"
     },
     {
@@ -28661,7 +28661,7 @@
       "writable": true,
       "enabled": true,
       "sortOrder": 32780,
-      "unit": "minute",
+      "unit": "min",
       "description": "total generation time"
     },
     {
@@ -28680,7 +28680,7 @@
       "writable": true,
       "enabled": true,
       "sortOrder": 32782,
-      "unit": "minute",
+      "unit": "min",
       "description": "total running time"
     },
     {
@@ -30389,7 +30389,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 36881,
-      "unit": "℃",
+      "unit": "°C",
       "description": "average cell temperature"
     },
     {
@@ -31264,7 +31264,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 36971,
-      "unit": "℃",
+      "unit": "°C",
       "description": "Battery pack temperature 1"
     },
     {
@@ -31283,7 +31283,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 36972,
-      "unit": "℃",
+      "unit": "°C",
       "description": "Battery pack temperature 2"
     },
     {
@@ -31302,7 +31302,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 36973,
-      "unit": "℃",
+      "unit": "°C",
       "description": "Battery pack temperature 3"
     },
     {
@@ -31321,7 +31321,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 36974,
-      "unit": "℃",
+      "unit": "°C",
       "description": "Battery pack temperature 4"
     },
     {
@@ -31340,7 +31340,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 36975,
-      "unit": "℃",
+      "unit": "°C",
       "description": "mOStube temperature"
     },
     {
@@ -31359,7 +31359,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 36976,
-      "unit": "℃",
+      "unit": "°C",
       "description": "Ambient temperature inside the battery pack"
     },
     {
@@ -32272,7 +32272,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 37035,
-      "unit": "℃",
+      "unit": "°C",
       "description": "Battery pack temperature 1"
     },
     {
@@ -32291,7 +32291,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 37036,
-      "unit": "℃",
+      "unit": "°C",
       "description": "Battery pack temperature 2"
     },
     {
@@ -32310,7 +32310,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 37037,
-      "unit": "℃",
+      "unit": "°C",
       "description": "Battery pack temperature 3"
     },
     {
@@ -32329,7 +32329,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 37038,
-      "unit": "℃",
+      "unit": "°C",
       "description": "Battery pack temperature 4"
     },
     {
@@ -32348,7 +32348,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 37039,
-      "unit": "℃",
+      "unit": "°C",
       "description": "mOStube temperature"
     },
     {
@@ -32367,7 +32367,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 37040,
-      "unit": "℃",
+      "unit": "°C",
       "description": "Ambient temperature inside the battery pack"
     },
     {
@@ -35306,5 +35306,5 @@
   ],
   "registerCount": 1906,
   "maxReadQuantity": 125,
-  "notes": "Includes all named Address Description entries except the explicitly reserved Production_Code slot. Four Super-admin password words are represented as read-only zero placeholders; no credential is simulated."
+  "notes": "Includes named Address Description entries with explicit data type and access metadata; untyped and reserved rows are excluded. Four Super-admin password words are represented as read-only zero placeholders; no credential is simulated. Source reconciliation: the workbook contains 1,954 named rows; 1,906 typed definitions are modeled. Forty-seven named rows have no data type, Production_Code is reserved with no access mode, and one unnamed typed row at 0x102F has no semantic label. These are explicitly excluded rather than assigned invented types or access."
 }

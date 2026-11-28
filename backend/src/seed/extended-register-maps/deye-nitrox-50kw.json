@@ -1026,13 +1026,14 @@
       "byteOrder": "BIG_ENDIAN",
       "wordOrder": "BIG_ENDIAN",
       "bitIndex": 0,
-      "scaleFactor": 1,
+      "scaleFactor": 0.1,
       "offset": 0,
       "group": "AC Measurements",
       "writable": false,
       "enabled": true,
       "sortOrder": 84,
-      "description": "84 输出视在功率低字节 Output apparent power Low word R [0,65535] 0.1VA"
+      "description": "84 输出视在功率低字节 Output apparent power Low word R [0,65535] 0.1VA",
+      "unit": "VA"
     },
     {
       "key": "output_apparent_power_high_word_0055_hr",
@@ -1044,13 +1045,14 @@
       "byteOrder": "BIG_ENDIAN",
       "wordOrder": "BIG_ENDIAN",
       "bitIndex": 0,
-      "scaleFactor": 1,
+      "scaleFactor": 0.1,
       "offset": 0,
       "group": "AC Measurements",
       "writable": false,
       "enabled": true,
       "sortOrder": 85,
-      "description": "85 输出视在功率高字节 Output apparent power High word R [0,65535] 0.1VA"
+      "description": "85 输出视在功率高字节 Output apparent power High word R [0,65535] 0.1VA",
+      "unit": "VA"
     },
     {
       "key": "output_active_power_low_word_0056_hr",
@@ -1106,7 +1108,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 88,
-      "unit": "Var",
+      "unit": "var",
       "description": "88 输出无功功率低字节 Output reactive power Low word R [0,65535] 0.1Var"
     },
     {
@@ -1125,7 +1127,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 89,
-      "unit": "Var",
+      "unit": "var",
       "description": "89 输出无功功率高字节 Output reactive power High word R [0,65535] 0.1Var"
     },
     {
@@ -1138,13 +1140,14 @@
       "byteOrder": "BIG_ENDIAN",
       "wordOrder": "BIG_ENDIAN",
       "bitIndex": 0,
-      "scaleFactor": 1,
-      "offset": 0,
+      "scaleFactor": 0.1,
+      "offset": -100,
       "group": "Other Parameters",
       "writable": false,
       "enabled": true,
       "sortOrder": 90,
-      "description": "90 散热片温度 Heatsink temperature R [0,3000] 0.1℃ 0℃ 表示为 1000; 0℃ indicated as 1000"
+      "description": "90 散热片温度 Heatsink temperature R [0,3000] 0.1℃ 0℃ 表示为 1000; 0℃ indicated as 1000",
+      "unit": "°C"
     },
     {
       "key": "igbt_module_temperature_005b_hr",
@@ -1156,13 +1159,14 @@
       "byteOrder": "BIG_ENDIAN",
       "wordOrder": "BIG_ENDIAN",
       "bitIndex": 0,
-      "scaleFactor": 1,
-      "offset": 0,
+      "scaleFactor": 0.1,
+      "offset": -100,
       "group": "Other Parameters",
       "writable": false,
       "enabled": true,
       "sortOrder": 91,
-      "description": "91 IGBT 模块温度 IGBT Module temperature R [0,3000] 0.1℃ 50.5 ℃表示为 1505; 50.5 ℃indicated as 1505"
+      "description": "91 IGBT 模块温度 IGBT Module temperature R [0,3000] 0.1℃ 50.5 ℃表示为 1505; 50.5 ℃indicated as 1505",
+      "unit": "°C"
     },
     {
       "key": "power_factor_005d_hr",
@@ -2408,7 +2412,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 200,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "200 当日用电量（旧） Daily Load Consumption(Old) R [0,65535] 0.01kwh 0196（0238）版本后采用新的寄存器 This Register is only Used for LCD version before 0196(Big LCD) / 0238(Small LCD)"
     },
     {
@@ -2427,7 +2431,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 201,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "201 累计用电量低字节 Total Load Consumption Low word R [0,65535] 0.1kwh"
     },
     {
@@ -2446,7 +2450,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 202,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "202 累计用电量高字节 Total Load Consumption High word R [0,65535] 0.1kwh"
     },
     {
@@ -2503,7 +2507,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 205,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "205 当日卖电量（旧） Daily Export Energy (Old) R [0,65535] 0.01kwh 0196（0238）版本后采用新的寄存器 This Register is only Used for LCD version before 0196(Big LCD) / 0238(Small LCD)"
     },
     {
@@ -2522,7 +2526,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 206,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "206 累计卖电量低字节 Total Export Energy Low word R [0,65535] 0.1kwh"
     },
     {
@@ -2541,7 +2545,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 207,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "207 累计卖电量高字节 Total Export Energy High word R [0,65535] 0.1kwh"
     },
     {
@@ -2560,7 +2564,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 208,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "208 当日购电量（旧） Daily Import(Old) R [0,65535] 0.01kwh 0196（0238）版本后采用新的寄存器 The new register was adopted after version 0196 (0238)"
     },
     {
@@ -2579,7 +2583,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 209,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "209 累计购电量低字节 Total Import Energy _Low word R [0,65535] 0.1kwh"
     },
     {
@@ -2598,7 +2602,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 210,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "210 累计购电量高字节 Total Import Energy _High word R [0,65535] 0.1kwh Modbus RTU Protocol V1.33 Register Table 7 Copyright © Ningbo Deye Inverter Technology Co., Ltd."
     },
     {
@@ -3173,13 +3177,14 @@
       "byteOrder": "BIG_ENDIAN",
       "wordOrder": "BIG_ENDIAN",
       "bitIndex": 0,
-      "scaleFactor": 1,
+      "scaleFactor": 10,
       "offset": 0,
       "group": "Status & Alarms",
       "writable": true,
       "enabled": true,
       "sortOrder": 308,
-      "description": "308 电网电压上限跳脱时间 1 阶 Grid voltage upper tripping time1 R/W [5,6000] 10ms"
+      "description": "308 电网电压上限跳脱时间 1 阶 Grid voltage upper tripping time1 R/W [5,6000] 10ms",
+      "unit": "ms"
     },
     {
       "key": "grid_voltage_upper_tripping_time2_0135_hr",
@@ -3191,13 +3196,14 @@
       "byteOrder": "BIG_ENDIAN",
       "wordOrder": "BIG_ENDIAN",
       "bitIndex": 0,
-      "scaleFactor": 1,
+      "scaleFactor": 10,
       "offset": 0,
       "group": "Status & Alarms",
       "writable": true,
       "enabled": true,
       "sortOrder": 309,
-      "description": "309 电网电压上限跳脱时间 2 阶 Grid voltage upper tripping time2 R/W [5,6000] 10ms"
+      "description": "309 电网电压上限跳脱时间 2 阶 Grid voltage upper tripping time2 R/W [5,6000] 10ms",
+      "unit": "ms"
     },
     {
       "key": "grid_voltage_upper_tripping_time3_0136_hr",
@@ -3209,13 +3215,14 @@
       "byteOrder": "BIG_ENDIAN",
       "wordOrder": "BIG_ENDIAN",
       "bitIndex": 0,
-      "scaleFactor": 1,
+      "scaleFactor": 10,
       "offset": 0,
       "group": "Status & Alarms",
       "writable": true,
       "enabled": true,
       "sortOrder": 310,
-      "description": "310 电网电压上限跳脱时间 3 阶 Grid voltage upper tripping time3 R/W [5,6000] 10ms"
+      "description": "310 电网电压上限跳脱时间 3 阶 Grid voltage upper tripping time3 R/W [5,6000] 10ms",
+      "unit": "ms"
     },
     {
       "key": "grid_voltage_lower_tripping_time1_0137_hr",
@@ -3227,13 +3234,14 @@
       "byteOrder": "BIG_ENDIAN",
       "wordOrder": "BIG_ENDIAN",
       "bitIndex": 0,
-      "scaleFactor": 1,
+      "scaleFactor": 10,
       "offset": 0,
       "group": "Status & Alarms",
       "writable": true,
       "enabled": true,
       "sortOrder": 311,
-      "description": "311 电网电压下限跳脱时间 1 阶 Grid voltage lower tripping time1 R/W [5,6000] 10ms"
+      "description": "311 电网电压下限跳脱时间 1 阶 Grid voltage lower tripping time1 R/W [5,6000] 10ms",
+      "unit": "ms"
     },
     {
       "key": "grid_voltage_lower_tripping_time2_0138_hr",
@@ -3245,13 +3253,14 @@
       "byteOrder": "BIG_ENDIAN",
       "wordOrder": "BIG_ENDIAN",
       "bitIndex": 0,
-      "scaleFactor": 1,
+      "scaleFactor": 10,
       "offset": 0,
       "group": "Status & Alarms",
       "writable": true,
       "enabled": true,
       "sortOrder": 312,
-      "description": "312 电网电压下限跳脱时间 2 阶 Grid voltage lower tripping time2 R/W [5,6000] 10ms"
+      "description": "312 电网电压下限跳脱时间 2 阶 Grid voltage lower tripping time2 R/W [5,6000] 10ms",
+      "unit": "ms"
     },
     {
       "key": "grid_voltage_lower_tripping_time3_0139_hr",
@@ -3263,13 +3272,14 @@
       "byteOrder": "BIG_ENDIAN",
       "wordOrder": "BIG_ENDIAN",
       "bitIndex": 0,
-      "scaleFactor": 1,
+      "scaleFactor": 10,
       "offset": 0,
       "group": "Status & Alarms",
       "writable": true,
       "enabled": true,
       "sortOrder": 313,
-      "description": "313 电网电压下限跳脱时间 3 阶 Grid voltage lower tripping time3 R/W [5,6000] 10ms"
+      "description": "313 电网电压下限跳脱时间 3 阶 Grid voltage lower tripping time3 R/W [5,6000] 10ms",
+      "unit": "ms"
     },
     {
       "key": "grid_frequency_upper_tripping_time1_013a_hr",
@@ -3281,13 +3291,14 @@
       "byteOrder": "BIG_ENDIAN",
       "wordOrder": "BIG_ENDIAN",
       "bitIndex": 0,
-      "scaleFactor": 1,
+      "scaleFactor": 10,
       "offset": 0,
       "group": "Status & Alarms",
       "writable": true,
       "enabled": true,
       "sortOrder": 314,
-      "description": "314 电网频率上限跳脱时间 1 阶 Grid frequency upper tripping time1 R/W [5,6000] 10ms"
+      "description": "314 电网频率上限跳脱时间 1 阶 Grid frequency upper tripping time1 R/W [5,6000] 10ms",
+      "unit": "ms"
     },
     {
       "key": "grid_frequency_upper_tripping_time2_013b_hr",
@@ -3299,13 +3310,14 @@
       "byteOrder": "BIG_ENDIAN",
       "wordOrder": "BIG_ENDIAN",
       "bitIndex": 0,
-      "scaleFactor": 1,
+      "scaleFactor": 10,
       "offset": 0,
       "group": "Status & Alarms",
       "writable": true,
       "enabled": true,
       "sortOrder": 315,
-      "description": "315 电网频率上限跳脱时间 2 阶 Grid frequency upper tripping time2 R/W [5,6000] 10ms"
+      "description": "315 电网频率上限跳脱时间 2 阶 Grid frequency upper tripping time2 R/W [5,6000] 10ms",
+      "unit": "ms"
     },
     {
       "key": "grid_frequency_upper_tripping_time3_013c_hr",
@@ -3317,13 +3329,14 @@
       "byteOrder": "BIG_ENDIAN",
       "wordOrder": "BIG_ENDIAN",
       "bitIndex": 0,
-      "scaleFactor": 1,
+      "scaleFactor": 10,
       "offset": 0,
       "group": "Status & Alarms",
       "writable": true,
       "enabled": true,
       "sortOrder": 316,
-      "description": "316 电网频率上限跳脱时间 3 阶 Grid frequency upper tripping time3 R/W [5,6000] 10ms"
+      "description": "316 电网频率上限跳脱时间 3 阶 Grid frequency upper tripping time3 R/W [5,6000] 10ms",
+      "unit": "ms"
     },
     {
       "key": "grid_frequency_lower_tripping_time1_013d_hr",
@@ -3335,13 +3348,14 @@
       "byteOrder": "BIG_ENDIAN",
       "wordOrder": "BIG_ENDIAN",
       "bitIndex": 0,
-      "scaleFactor": 1,
+      "scaleFactor": 10,
       "offset": 0,
       "group": "Status & Alarms",
       "writable": true,
       "enabled": true,
       "sortOrder": 317,
-      "description": "317 电网频率下限跳脱时间 1 阶 Grid frequency lower tripping time1 R/W [5,6000] 10ms"
+      "description": "317 电网频率下限跳脱时间 1 阶 Grid frequency lower tripping time1 R/W [5,6000] 10ms",
+      "unit": "ms"
     },
     {
       "key": "grid_frequency_lower_tripping_time2_013e_hr",
@@ -3353,13 +3367,14 @@
       "byteOrder": "BIG_ENDIAN",
       "wordOrder": "BIG_ENDIAN",
       "bitIndex": 0,
-      "scaleFactor": 1,
+      "scaleFactor": 10,
       "offset": 0,
       "group": "Status & Alarms",
       "writable": true,
       "enabled": true,
       "sortOrder": 318,
-      "description": "318 电网频率下限跳脱时间 2 阶 Grid frequency lower Tripping time2 R/W [5,6000] 10ms"
+      "description": "318 电网频率下限跳脱时间 2 阶 Grid frequency lower Tripping time2 R/W [5,6000] 10ms",
+      "unit": "ms"
     },
     {
       "key": "grid_frequency_lower_tripping_time3_013f_hr",
@@ -3371,13 +3386,14 @@
       "byteOrder": "BIG_ENDIAN",
       "wordOrder": "BIG_ENDIAN",
       "bitIndex": 0,
-      "scaleFactor": 1,
+      "scaleFactor": 10,
       "offset": 0,
       "group": "Status & Alarms",
       "writable": true,
       "enabled": true,
       "sortOrder": 319,
-      "description": "319 电网频率下限跳脱时间 3 阶 Grid frequency lower tripping time3 R/W [5,6000] 10ms"
+      "description": "319 电网频率下限跳脱时间 3 阶 Grid frequency lower tripping time3 R/W [5,6000] 10ms",
+      "unit": "ms"
     },
     {
       "key": "upper_grid_voltage_for_reconnection_0140_hr",
@@ -4545,7 +4561,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 600,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "600 当日用电量低字节(新) Daily Consumption Low word(New) R 0.01kwh 0196（0238）版本后采用新的寄存器 For LCD version after 0196 (0238)"
     },
     {
@@ -4564,7 +4580,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 601,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "601 当日用电量高字节(新) Daily Consumption High word(New) R 0.01kwh"
     },
     {
@@ -4583,7 +4599,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 602,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "602 当日卖电量低字节(新) Daily Consumption Low word(New) R 0.01kwh"
     },
     {
@@ -4602,7 +4618,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 603,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "603 当日卖电量高字节(新) Daily Consumption High word(New) R 0.01kwh"
     },
     {
@@ -4621,7 +4637,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 604,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "604 当日购电量低字节(新) Daily Consumption Low word(New) R 0.01kwh"
     },
     {
@@ -4640,7 +4656,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 605,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "605 当日购电量高字节(新) Daily Consumption High word(New) R 0.01kwh"
     },
     {
@@ -4736,5 +4752,5 @@
   ],
   "registerCount": 254,
   "maxReadQuantity": 125,
-  "notes": "Includes the documented Meter Enable register; the source document is V1.34 while the register-table revision printed in the table is V1.33."
+  "notes": "Includes the documented Meter Enable register; the source document is V1.34 while the register-table revision printed in the table is V1.33. V1.34 reconciliation: 32-bit active/apparent power values are separate low-word then high-word UINT16 registers; addresses 90–91 decode as (raw × 0.1) − 100 °C; tripping-time registers 308–319 use 10 ms/count. Debug block 120–149 is excluded because the manual supplies no per-word type or semantic mapping."
 }

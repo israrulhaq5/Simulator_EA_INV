@@ -1,70 +1,42 @@
-# Extended inverter simulator profiles
+# Extended inverter profile manual audit
 
-## Built-in profiles and Modbus identity
+Six generic Modbus TCP inverter profiles are seeded after the existing Unit IDs 1–4. The extended profiles use Unit IDs **5–10** in this order: SOFAR, Growatt, Deye/Nitrox, FoxESS, GoodWe and ESINV.
 
-The simulator ships ten built-in devices on one shared Modbus TCP listener:
+## Manual coverage
 
-| Unit ID | Device |
-| ---: | --- |
-| 1 | EM500 meter |
-| 2 | Huawei SUN2000 |
-| 3 | Solis |
-| 4 | Sungrow |
-| 5 | SOFAR 110KTL |
-| 6 | Growatt MAX 50–100K |
-| 7 | Deye / NITROX 50kW |
-| 8 | FoxESS R / V / H3plus |
-| 9 | GoodWe Hybrid EN / 3EM |
-| 10 | ESINV-33000ID |
+| Profile | Source manual | Definitions | Holding (FC03) | Input (FC04) |
+|---|---|---:|---:|---:|
+| SOFAR 110KTL | [SOFAR register workbook](https://docs.google.com/spreadsheets/d/1w7n2BHKOBV-zs1enzNzO2Y86zRo8TqDp/edit) | 1,906 | 1,906 | — |
+| Growatt MAX | [Modbus V1.13](https://drive.google.com/file/d/1f_PtEQhFqvni5wYkYIZCzhN4pRkqdGj6/view) | 1,284 | 411 | 873 |
+| Deye / NITROX 50 kW | [Modbus V1.34](https://drive.google.com/file/d/10dOowgYYibYXr8Y5JM5qNniaxQfrzNv0/view) | 254 | 254 | — |
+| FoxESS R/V/H3Plus | [Modbus V1.07](https://drive.google.com/file/d/1vRWJOxO-eS5ZzC83ZqLg_u3XVCKCNLXb/view) | 559 | 559 | — |
+| GoodWe Hybrid | [Modbus V1.3](https://drive.google.com/file/d/1XvQqYtvcPU0xyzXfZY4IDWuNGokdcBi4/view) | 156 | 156 | — |
+| ESINV-33000ID | [Modbus V3.4](https://drive.google.com/file/d/128BIZGVoqwRNozznQOHcGiPUErooRHch/view) | 768 | 437 | 331 |
 
-All default to TCP port **502**. Devices on the same host/port are routed by Modbus Unit ID; they do not open ten competing listeners.
+A dash means that the supplied manual does not define that register table for the profile. FC03 is exercised for all six profiles; FC04 is exercised for Growatt MAX and ESINV only. FC16 writes are exercised for each profile's configured power-control register.
 
-## Register maps
+## Register reconciliation and source caveats
 
-The six profile maps are seeded as built-ins and versioned at profile version 2. Register counts include documented disabled entries retained for traceability.
+- **SOFAR 110KTL:** The workbook reports 1,954 named rows. The profile models 1,906 typed definitions. Forty-seven named rows have no data type, `Production_Code` is reserved with no access mode, and one additional typed row at `0x102F` has no semantic label. None are assigned invented types or access. Four super-admin password words remain read-only zero placeholders.
+- **Growatt MAX:** The V1.13 map is limited to the MAX profile; SPH/SPA-only storage blocks are not mixed into it. PID PV1–PV8 current scaling is 0.1 mA/count; StatusInfo voltage/current and maximum charge current are 10 mV/count or 10 mA/count; DCI_R/S/T are 0.1 mA/count; GFCI is 1 mA/count; DCV is 1 mV/count; timing values are 1 ms/count. The manual defines the register words as unsigned 16-bit values.
+- **Deye / NITROX:** The 32-bit active/apparent-power values are kept as separate UINT16 low-word then high-word registers, matching the manual's address order. Heatsink and IGBT temperatures at 90–91 decode as `(raw × 0.1) − 100 °C`. Tripping-time registers 308–319 use 10 ms/count. Debug block 120–149 is not exposed because the manual does not define per-word types or meanings.
+- **FoxESS:** Manual addresses are one-based; the map stores PDU offsets (manual address minus one). Numeric multipliers are represented in `scaleFactor`, not embedded in the unit label. The manual prints String 1/2/9 current units as `0 01A`, which is ambiguous; those three registers are disabled until FoxESS confirms the scale. Model 701 length is set to 153 from the next model start at 40226; the manual's printed length 31 conflicts with that contiguous block. Three overlapping Act Pt U32 / Dept Ref fields remain disabled. The SunSpec model chain and end marker are retained.
+- **GoodWe:** The 0x0200 serial-number block (8 words) and 0x0210 model-name block (5 words) are represented as ASCII strings. Meter connection status registers 0x059D and 0x059E are included as read-only UINT16 values. Multiword values use the manual's high-word-first order.
+- **ESINV-33000ID:** The map contains 331 input and 437 holding definitions. SOC/SOH at 34200, 34201, 34216 and 34217 use a 0.001 ratio; the simulator supplies fractional values (0.785 for 78.5%). Register 34203 is labeled Current but the manual prints `0.1V`; its `10 raw = 1A` conversion is consistent with 0.1 A/count, so the unit is normalized to A. Register 43077 is an enumeration, not a seconds value. Register 43074 uses 100 W/count for the ESINV-33000ID/S6/RHI 3–6 kW variants; the RHI-1P/3P 5–10 kW family is a separate 1 W/count variant and must use a separate profile.
 
-| Profile | Register definitions | Manual coverage notes |
-| --- | ---: | --- |
-| SOFAR 110KTL | 1,906 | Named workbook entries are mapped; the explicit reserved Production_Code slot is omitted. Four Super-admin password words are represented as read-only zero placeholders. |
-| Growatt MAX 50–100K | 1,284 | Adds the omitted inverter diagnostics, debug words, control settings and three-phase AC measurements. SPH4–11K/SPA-only storage blocks, reserved addresses and ranges marked no-use are excluded from the MAX profile. |
-| Deye / NITROX 50kW | 254 | Includes Meter Enable. The supplied document is V1.34; its register table identifies revision V1.33. |
-| FoxESS R/V/H3plus | 559 | Includes SunSpec model IDs 707 and 708. Three overlapping Act Pt U32 entries from the supplied manual are retained but disabled because each two-word span collides with the next Dept Ref address. Model 701 length is reconciled to 153 (the manual prints 31, but Model 702 starts at manual address 40226); the required 0xFFFF/0 end marker is appended. |
-| GoodWe Hybrid EN / 3EM | 154 | Includes the supplied ASCII and multi-register fields. |
-| ESINV-33000ID | 768 | Includes the supplied runtime input-register and configuration holding-register tables. |
+## Byte order and word order
 
-The register validator checks unique keys and start addresses. Regression tests additionally check that enabled register spans do not overlap.
+- All catalogued definitions declare **BIG_ENDIAN** byte order and word order.
+- SOFAR, GoodWe and ESINV manuals specify high-byte-first / high-word-first ordering for their multiword values.
+- Growatt's 16-bit words are high-byte-first; fields explicitly split into low/high words remain separate definitions.
+- Deye is high-byte-first within each register. Its low-word/high-word pairs are modeled separately with the low word at the lower address.
+- FoxESS uses SunSpec register types and big-endian word order by SunSpec convention. The V1.07 manual does not explicitly spell out the multiword word-order sentence; physical readback should be part of the first FoxESS bench test.
 
-## Address conventions
+## Runtime and verification
 
-The FoxESS manual publishes SunSpec reference addresses such as 40001. The simulator's Modbus vector uses the address field sent in the Modbus PDU, so FoxESS profile addresses are normalized by subtracting one from the manual reference address. The original manufacturer address remains in each register description and the profile metadata records addressOffset = -1. Independent cross-check: https://github.com/HarshBhardwaj/foxess-local/blob/main/docs/02-frontend-decoder-and-register-map.md. The simulator returns the SunSpec identifier 0x53756e53, the manual's model IDs and model-length fields, plus the required 0xFFFF/0 end marker. Model 701 length is set to 153 based on the next model's documented start address and an independent decoded FoxESS map; this differs from the V1.07 manual's printed value of 31.
+- Unit IDs 5–10 route independently; existing Unit IDs 1–4 are unchanged.
+- The TCP integration test opens real loopback TCP sockets and verifies FC03 holding reads, FC04 input reads where the manual defines them, FC16 power-control writes and readback, control-enable writes, remote-stop writes, and rejection of an unknown Unit ID.
+- Register-audit tests verify the manual counts, register-type partitions, data types, byte/word order, scaling, offsets, explicit exclusions and SOC/SOH engineering conversion.
+- CI is defined in `.github/workflows/backend-ci.yml` and runs on a self-hosted macOS ARM64 runner with Node 22, `npm ci` and `npm run check`.
 
-Other profiles retain the raw addresses published in their supplied register tables.
-
-## Runtime behavior
-
-- FC03 holding-register and FC04 input-register reads are served from the selected profile.
-- FC16 writes are decoded using the same register encoder/decoder as the gateway and applied to the generic inverter control model.
-- Power-limit writes update percent derating or absolute-watt limits according to each profile's control metadata.
-- Remote stop/start and power-control-enable registers update the simulated operating state where documented.
-- The meter's grid-point calculation includes output from all nine inverter simulators.
-- Registers explicitly marked disabled are not populated or writable. The generic device defaults to exception responses for unmapped gaps rather than inventing zero-valued registers.
-
-The generic model produces continuously varying telemetry for integration and acceptance testing. Generated numeric values are bounded to each register's declared integer range before encoding. It is not a firmware-exact electrical model; site commissioning against each physical inverter remains a separate validation step.
-
-## Port 502 permissions
-
-Port 502 is a privileged port on Linux and macOS. On Linux, run the service as its normal unprivileged user and grant only the bind capability, for example in the systemd service:
-
-```ini
-[Service]
-User=simulator
-AmbientCapabilities=CAP_NET_BIND_SERVICE
-CapabilityBoundingSet=CAP_NET_BIND_SERVICE
-NoNewPrivileges=true
-```
-
-Do not run the simulator as root solely to bind port 502. Ensure no other process is already listening on the selected host/port.
-
-## CI
-
-The .github/workflows/backend-ci.yml workflow runs the backend lint and complete Node test suite on the repository's self-hosted macOS ARM64 runner. GitHub-hosted runners are not used.
+**Important:** TCP integration tests exercise the simulator's Modbus TCP server, not physical inverter hardware. Physical-device bench validation is still required before enabling the three ambiguous FoxESS current registers or commissioning a real inverter.

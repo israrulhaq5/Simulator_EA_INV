@@ -1979,7 +1979,7 @@
       "writable": true,
       "enabled": true,
       "sortOrder": 107,
-      "unit": "S",
+      "unit": "s",
       "description": "107 QVRPDelayTi meEE QV Reactive Power delaytime W 0-30 1S 3S"
     },
     {
@@ -7708,7 +7708,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 53,
-      "unit": "kWH",
+      "unit": "kWh",
       "description": "53. Eactoday H Today generate energy (high) 0.1kWH"
     },
     {
@@ -7727,7 +7727,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 54,
-      "unit": "kWH",
+      "unit": "kWh",
       "description": "54. Eac today L Today generate energy (low) 0.1kWH"
     },
     {
@@ -7746,7 +7746,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 55,
-      "unit": "kWH",
+      "unit": "kWh",
       "description": "55. Eac total H Total generate energy (high) 0.1kWH"
     },
     {
@@ -7765,7 +7765,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 56,
-      "unit": "kWH",
+      "unit": "kWh",
       "description": "56. Eac total L Total generate energy (low) 0.1kWH"
     },
     {
@@ -8467,7 +8467,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 93,
-      "unit": "C",
+      "unit": "°C",
       "description": "93. Temp1 Inverter temperature 0.1C"
     },
     {
@@ -8486,7 +8486,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 94,
-      "unit": "C",
+      "unit": "°C",
       "description": "94. Temp2 The inside IPM in inverter Temperature 0.1C"
     },
     {
@@ -8505,7 +8505,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 95,
-      "unit": "C",
+      "unit": "°C",
       "description": "95. Temp3 Boost temperature 0.1C"
     },
     {
@@ -8816,7 +8816,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 112,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "112. bINVWarnCode bINVWarnCode MAX EACharge_Today _H ACCharge energy today 0.1kwh Storage Power"
     },
     {
@@ -8835,7 +8835,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 113,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "113. real Power Percent real Power Percent 0-100 % MAX EACharge_Today _L ACCharge energy today 0.1kwh Storage Power"
     },
     {
@@ -8854,7 +8854,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 114,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "114. inv start delay time inv start delay time MAX EACharge_Total _H ACCharge energy total 0.1kwh Storage Power"
     },
     {
@@ -8873,7 +8873,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 115,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "115. bINVAllFaultCod e bINVAllFaultCode MAX EACharge_Total ACCharge energy total 0.1kwh Storage 41 / 81 古瑞瓦特新能源股份有限公司 中国深圳市宝安区石岩街道办龙腾 社区光明路 28 号 P.C. 518000 Tel: 86 75529515888 www.growatt.com Growatt New Energy Technology Co., Ltd. #28 GuangmingRoad ,LongTeng community, Shiyan, Baoan District, Shenzhen, P.R. China. _L Power"
     },
     {
@@ -8892,7 +8892,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 116,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "116. AC charge Power_H Grid power to local load 0.1kwh Storage Power"
     },
     {
@@ -8911,7 +8911,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 117,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "117. AC charge Power_L Grid power to local load 0.1kwh Storage Power"
     },
     {
@@ -9015,13 +9015,14 @@
       "byteOrder": "BIG_ENDIAN",
       "wordOrder": "BIG_ENDIAN",
       "bitIndex": 0,
-      "scaleFactor": 1,
+      "scaleFactor": 0.1,
       "offset": 0,
       "group": "PV & DC",
       "writable": false,
       "enabled": true,
       "sortOrder": 126,
-      "description": "126. PID PV1+ Current PID PV1PE Curr -10~10mA 0.1mA"
+      "description": "126. PID PV1+ Current PID PV1PE Curr -10~10mA 0.1mA",
+      "unit": "mA"
     },
     {
       "key": "pid_pv2_voltage_pid_pv2pe_volt_0_1000v_0_1v_007f_ir",
@@ -9052,13 +9053,14 @@
       "byteOrder": "BIG_ENDIAN",
       "wordOrder": "BIG_ENDIAN",
       "bitIndex": 0,
-      "scaleFactor": 1,
+      "scaleFactor": 0.1,
       "offset": 0,
       "group": "PV & DC",
       "writable": false,
       "enabled": true,
       "sortOrder": 128,
-      "description": "128. PID PV2+ Current PID PV2PE Curr -10~10mA 0.1mA"
+      "description": "128. PID PV2+ Current PID PV2PE Curr -10~10mA 0.1mA",
+      "unit": "mA"
     },
     {
       "key": "pid_pv3_voltage_pid_pv3pe_volt_0_1000v_0_1v_0081_ir",
@@ -9089,13 +9091,14 @@
       "byteOrder": "BIG_ENDIAN",
       "wordOrder": "BIG_ENDIAN",
       "bitIndex": 0,
-      "scaleFactor": 1,
+      "scaleFactor": 0.1,
       "offset": 0,
       "group": "PV & DC",
       "writable": false,
       "enabled": true,
       "sortOrder": 130,
-      "description": "130. PID PV3+ Current PID PV3PE Curr -10~10mA 0.1mA"
+      "description": "130. PID PV3+ Current PID PV3PE Curr -10~10mA 0.1mA",
+      "unit": "mA"
     },
     {
       "key": "pid_pv4_voltage_pid_pv4pe_volt_0_1000v_0_1v_0083_ir",
@@ -9126,13 +9129,14 @@
       "byteOrder": "BIG_ENDIAN",
       "wordOrder": "BIG_ENDIAN",
       "bitIndex": 0,
-      "scaleFactor": 1,
+      "scaleFactor": 0.1,
       "offset": 0,
       "group": "PV & DC",
       "writable": false,
       "enabled": true,
       "sortOrder": 132,
-      "description": "132. PID PV4+ Current PID PV4PE Curr -10~10mA 0.1mA"
+      "description": "132. PID PV4+ Current PID PV4PE Curr -10~10mA 0.1mA",
+      "unit": "mA"
     },
     {
       "key": "pid_pv5_voltage_pid_pv5pe_volt_0_1000v_0_1v_0085_ir",
@@ -9163,13 +9167,14 @@
       "byteOrder": "BIG_ENDIAN",
       "wordOrder": "BIG_ENDIAN",
       "bitIndex": 0,
-      "scaleFactor": 1,
+      "scaleFactor": 0.1,
       "offset": 0,
       "group": "PV & DC",
       "writable": false,
       "enabled": true,
       "sortOrder": 134,
-      "description": "134. PID PV5+ Current PID PV5PE Curr -10~10mA 0.1mA"
+      "description": "134. PID PV5+ Current PID PV5PE Curr -10~10mA 0.1mA",
+      "unit": "mA"
     },
     {
       "key": "pid_pv6_voltage_pid_pv6pe_volt_0_1000v_0_1v_0087_ir",
@@ -9200,13 +9205,14 @@
       "byteOrder": "BIG_ENDIAN",
       "wordOrder": "BIG_ENDIAN",
       "bitIndex": 0,
-      "scaleFactor": 1,
+      "scaleFactor": 0.1,
       "offset": 0,
       "group": "PV & DC",
       "writable": false,
       "enabled": true,
       "sortOrder": 136,
-      "description": "136. PID PV6+ Current PID PV6PE Curr -10~10mA 0.1mA"
+      "description": "136. PID PV6+ Current PID PV6PE Curr -10~10mA 0.1mA",
+      "unit": "mA"
     },
     {
       "key": "pid_pv7_voltage_pid_pv7pe_volt_0_1000v_0_1v_0089_ir",
@@ -9237,13 +9243,14 @@
       "byteOrder": "BIG_ENDIAN",
       "wordOrder": "BIG_ENDIAN",
       "bitIndex": 0,
-      "scaleFactor": 1,
+      "scaleFactor": 0.1,
       "offset": 0,
       "group": "PV & DC",
       "writable": false,
       "enabled": true,
       "sortOrder": 138,
-      "description": "138. PID PV7+ Current PID PV7PE Curr -10~10mA 0.1mA"
+      "description": "138. PID PV7+ Current PID PV7PE Curr -10~10mA 0.1mA",
+      "unit": "mA"
     },
     {
       "key": "pid_pv8_voltage_pid_pv8pe_volt_0_1000v_0_1v_008b_ir",
@@ -9274,13 +9281,14 @@
       "byteOrder": "BIG_ENDIAN",
       "wordOrder": "BIG_ENDIAN",
       "bitIndex": 0,
-      "scaleFactor": 1,
+      "scaleFactor": 0.1,
       "offset": 0,
       "group": "PV & DC",
       "writable": false,
       "enabled": true,
       "sortOrder": 140,
-      "description": "140. PID PV8+ Current PID PV8PE Curr -10~10mA 0.1mA"
+      "description": "140. PID PV8+ Current PID PV8PE Curr -10~10mA 0.1mA",
+      "unit": "mA"
     },
     {
       "key": "pid_status_bit0_7_pid_working_status_008d_ir",
@@ -10537,7 +10545,8 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 279,
-      "description": "279. Time Limit Safety time limit value 1ms"
+      "description": "279. Time Limit Safety time limit value 1ms",
+      "unit": "ms"
     },
     {
       "key": "real_value_real_voltage_frequency_value_0_1v_0118_ir",
@@ -10612,7 +10621,8 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 283,
-      "description": "283. Test treat time Auto test treat time 1ms"
+      "description": "283. Test treat time Auto test treat time 1ms",
+      "unit": "ms"
     },
     {
       "key": "e_hour0_h_energy_hourly_of_this_day47_81_011c_ir",
@@ -11459,7 +11469,8 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 751,
-      "description": "751. GFCI fault Value GFCI fault Value 1mA"
+      "description": "751. GFCI fault Value GFCI fault Value 1mA",
+      "unit": "mA"
     },
     {
       "key": "dci_fault_value_dci_fault_value_0_01a_02f0_ir",
@@ -11553,7 +11564,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 756,
-      "unit": "C",
+      "unit": "°C",
       "description": "756. Temperature fault Value Temperature fault value 0.1C"
     },
     {
@@ -11973,7 +11984,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1015,
-      "unit": "w",
+      "unit": "W",
       "description": "1015. Pactouser R H AC power to user H 0.1w"
     },
     {
@@ -11992,7 +12003,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1016,
-      "unit": "w",
+      "unit": "W",
       "description": "1016. Pactouser R L AC power to user L 0.1w"
     },
     {
@@ -12011,7 +12022,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1017,
-      "unit": "w",
+      "unit": "W",
       "description": "1017. Pactouser S H Pactouser S H 0.1w"
     },
     {
@@ -12030,7 +12041,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1018,
-      "unit": "w",
+      "unit": "W",
       "description": "1018. Pactouser S L Pactouser S L 0.1w"
     },
     {
@@ -12049,7 +12060,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1019,
-      "unit": "w",
+      "unit": "W",
       "description": "1019. Pactouser T H Pactouser T H 0.1w"
     },
     {
@@ -12068,7 +12079,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1020,
-      "unit": "w",
+      "unit": "W",
       "description": "1020. Pactouser T L Pactouser T H 0.1w"
     },
     {
@@ -12087,7 +12098,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1021,
-      "unit": "w",
+      "unit": "W",
       "description": "1021. PactouserTotal H AC power to user total H 0.1w"
     },
     {
@@ -12106,7 +12117,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1022,
-      "unit": "w",
+      "unit": "W",
       "description": "1022. PactouserTotal L AC power to user total L 0.1w"
     },
     {
@@ -12125,7 +12136,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1023,
-      "unit": "w",
+      "unit": "W",
       "description": "1023. Pac to grid R H AC power to grid H 0.1w Ac output"
     },
     {
@@ -12144,7 +12155,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1024,
-      "unit": "w",
+      "unit": "W",
       "description": "1024. Pac to grid R L AC power to grid L 0.1w"
     },
     {
@@ -12163,7 +12174,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1025,
-      "unit": "w",
+      "unit": "W",
       "description": "1025. Pactogrid S H 0.1w"
     },
     {
@@ -12182,7 +12193,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1026,
-      "unit": "w",
+      "unit": "W",
       "description": "1026. Pactogrid S L 0.1w"
     },
     {
@@ -12219,7 +12230,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1028,
-      "unit": "w",
+      "unit": "W",
       "description": "1028. Pactogrid T L 0.1w"
     },
     {
@@ -12238,7 +12249,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1029,
-      "unit": "w",
+      "unit": "W",
       "description": "1029. Pactogrid total H AC power to grid total H 0.1w"
     },
     {
@@ -12257,7 +12268,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1030,
-      "unit": "w",
+      "unit": "W",
       "description": "1030. Pactogrid total L AC power to grid total L 0.1w"
     },
     {
@@ -12276,7 +12287,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1031,
-      "unit": "w",
+      "unit": "W",
       "description": "1031. PLocalLoad R H INV power to local load H 0.1w"
     },
     {
@@ -12295,7 +12306,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1032,
-      "unit": "w",
+      "unit": "W",
       "description": "1032. PLocalLoad R L INV power to local load L 0.1w"
     },
     {
@@ -12314,7 +12325,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1033,
-      "unit": "w",
+      "unit": "W",
       "description": "1033. PLocalLoad S H 0.1w"
     },
     {
@@ -12333,7 +12344,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1034,
-      "unit": "w",
+      "unit": "W",
       "description": "1034. PLocalLoad S L 0.1w"
     },
     {
@@ -12352,7 +12363,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1035,
-      "unit": "w",
+      "unit": "W",
       "description": "1035. PLocalLoadT H 0.1w"
     },
     {
@@ -12371,7 +12382,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1036,
-      "unit": "w",
+      "unit": "W",
       "description": "1036. PLocalLoadT L 0.1w"
     },
     {
@@ -12390,7 +12401,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1037,
-      "unit": "w",
+      "unit": "W",
       "description": "1037. PLocalLoad total H INV power to local load total H 0.1w"
     },
     {
@@ -12409,7 +12420,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1038,
-      "unit": "w",
+      "unit": "W",
       "description": "1038. PLocalLoad total L INV power to local load total L 0.1w"
     },
     {
@@ -13857,7 +13868,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1250,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1250. Ec_ day0 H Energy Charge of latest day 0.1kwh No use 1251 Ec_day0 L Energy Charge of latest day 0.1kwh No use 1252 Ec_ day1 H Energy Charge of latest 1st day 0.1kwh 1253 Ec_ day1 L Energy Charge of latest 1st day 0.1kwh … Ec_ day … 0.1kwh … Ec_ day … 0.1kwh …. Ec_ day 6 H Energy Charge of latest 6th day 0.1kwh"
     },
     {
@@ -13876,7 +13887,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1261,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1261. Ec_ day 6L Energy Charge of latest 6th day 0.1kwh"
     },
     {
@@ -13913,7 +13924,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1263,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1263. Ec_ month0 L Energy Charge of latest month 0.1kwh"
     },
     {
@@ -13932,7 +13943,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1264,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1264. Ec_ month1 H Energy Charge of latest 1st month 0.1kwh"
     },
     {
@@ -13951,7 +13962,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1265,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1265. Ec_ month1 L Energy Charge of latest 1st month 0.1kwh … Ec_ month … 0.1kwh No use … Ec_ month … 0.1kwh No use"
     },
     {
@@ -13970,7 +13981,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1284,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1284. Ec_ month11 H Energy Charge of latest 11th month 0.1kwh"
     },
     {
@@ -13989,7 +14000,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1285,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1285. Ec_ month11L Energy Charge of latest 11th month 0.1kwh"
     },
     {
@@ -14008,7 +14019,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1286,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1286. Ec_ year0 H Energy Charge of latest year 0.1kwh"
     },
     {
@@ -14027,7 +14038,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1287,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1287. Ec_ year 0 L Energy Charge of latest year 0.1kwh"
     },
     {
@@ -14046,7 +14057,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1288,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1288. Ed_ day0 H Energy Disharge of latest day 0.1kwh"
     },
     {
@@ -14065,7 +14076,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1289,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1289. Ed_day0 L Energy Disharge of latest day 0.1kwh"
     },
     {
@@ -14084,7 +14095,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1290,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1290. Ed_ day1 H Energy Disharge of latest 1st day 0.1kwh"
     },
     {
@@ -14103,7 +14114,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1291,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1291. Ed_ day1 L Energy Disharge of latest 1st day 0.1kwh … Ed_ day … 0.1kwh No use … Ed_ day … 0.1kwh No use"
     },
     {
@@ -14122,7 +14133,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1298,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1298. Ed_ day 6 H Energy Disharge of latest 6th day 0.1kwh No use"
     },
     {
@@ -14141,7 +14152,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1299,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1299. Ed_ day 6L Energy Disharge of latest 6th day 0.1kwh No use"
     },
     {
@@ -14160,7 +14171,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1300,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1300. Ed_ month0 H Energy Disharge of latest month 0.1kwh No use"
     },
     {
@@ -14179,7 +14190,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1301,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1301. Ed_ month0 L Energy Disharge of latest month 0.1kwh No use"
     },
     {
@@ -14198,7 +14209,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1302,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1302. Ed_ month1 H Energy Disharge of latest 1st month 0.1kwh No use"
     },
     {
@@ -14217,7 +14228,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1303,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1303. Ed_ month1 L Energy Disharge of latest 1st month 0.1kwh No use … Ed_ month … 0.1kwh … Ed_ month … 0.1kwh 1322. Ed_ month11 H Energy Disharge of latest 11th month 0.1kwh"
     },
     {
@@ -14236,7 +14247,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1323,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1323. Ed_ month11L Energy Disharge of latest 11th month 0.1kwh"
     },
     {
@@ -14255,7 +14266,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1324,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1324. Ed_ year0 H Energy Disharge of latest year 0.1kwh"
     },
     {
@@ -14274,7 +14285,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1325,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1325. Ed_ year 0 L Energy Disharge of latest year 0.1kwh"
     },
     {
@@ -14293,7 +14304,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1326,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1326. Eg_ day0 H Energy to grid of latest day 0.1kwh"
     },
     {
@@ -14312,7 +14323,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1327,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1327. Eg_day0 L Energy to grid of latest day 0.1kwh"
     },
     {
@@ -14331,7 +14342,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1328,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1328. Eg_ day1 H Energy to grid of latest 1st day 0.1kwh"
     },
     {
@@ -14350,7 +14361,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1329,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1329. Eg_ day1 L Energy to grid of latest 1st day 0.1kwh … Eg_ day … 0.1kwh … Eg_ day … 0.1kwh"
     },
     {
@@ -14369,7 +14380,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1337,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1337. Eg_ day 6 H Energy to grid of latest 6th day 0.1kwh"
     },
     {
@@ -14406,7 +14417,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1339,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1339. Eg_ month0 H Energy to grid of latest month 0.1kwh"
     },
     {
@@ -14425,7 +14436,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1340,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1340. Eg_ month0 L Energy to grid of latest month 0.1kwh"
     },
     {
@@ -14444,7 +14455,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1341,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1341. Eg_ month1 H Energy to grid of latest 1st month 0.1kwh"
     },
     {
@@ -14463,7 +14474,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1342,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1342. Eg_ month1 L Energy to grid of latest 1st month 0.1kwh … Eg_ month … 0.1kwh … Eg_ month … 0.1kwh"
     },
     {
@@ -14482,7 +14493,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1361,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1361. Eg_ month11 H Energy to grid of latest 11th month 0.1kwh"
     },
     {
@@ -14501,7 +14512,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1362,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1362. Eg_ month11L Energy to grid of latest 11th month 0.1kwh"
     },
     {
@@ -14520,7 +14531,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1363,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1363. Eg_ year0 H Energy to grid of latest year 0.1kwh"
     },
     {
@@ -14539,7 +14550,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1364,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1364. Eg_ year 0 L Energy to grid of latest year 0.1kwh"
     },
     {
@@ -14558,7 +14569,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1365,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1365. Eu_ day0 H Energy to user of latest day 0.1kwh"
     },
     {
@@ -14577,7 +14588,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1366,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1366. Eu_day0 L Energy to user of latest day 0.1kwh No use"
     },
     {
@@ -14596,7 +14607,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1367,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1367. Eu_ day1 H Energy to user of latest 1st day 0.1kwh No use"
     },
     {
@@ -14615,7 +14626,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1368,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1368. Eu_ day1 L Energy to user of latest 1st day 0.1kwh No use … Eu_ day … 0.1kwh No use … Eu_ day … 0.1kwh No use Eleventh group for Storage power no use"
     },
     {
@@ -14634,7 +14645,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1375,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1375. Eu_ day 6 H Energy to user of latest 6th day 0.1kwh No use"
     },
     {
@@ -14653,7 +14664,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1376,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1376. Eu_ day 6L Energy to user of latest 6th day 0.1kwh"
     },
     {
@@ -14672,7 +14683,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1377,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1377. Eu_ month0 H Energy to user of latest month 0.1kwh"
     },
     {
@@ -14691,7 +14702,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1378,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1378. Eu_ month0 L Energy to user of latest month 0.1kwh"
     },
     {
@@ -14710,7 +14721,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1379,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1379. Eu_ month1 H Energy to user of latest 1st month 0.1kwh"
     },
     {
@@ -14729,7 +14740,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1380,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1380. Eu_ month1 L Energy to user of latest 1st month 0.1kwh … Eu_ month … 0.1kwh … Eu_ month … 0.1kwh"
     },
     {
@@ -14748,7 +14759,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1399,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1399. Eu_ month11 H Energy to user of latest 11th month 0.1kwh"
     },
     {
@@ -14767,7 +14778,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1400,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1400. Eu_ month11L Energy to user of latest 11th month 0.1kwh"
     },
     {
@@ -14786,7 +14797,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1401,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1401. Eu_ year0 H Energy to user of latest year 0.1kwh"
     },
     {
@@ -14805,7 +14816,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1402,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "1402. Eu_ year 0 L Energy to user of latest year 0.1kwh Twelfth group for buck-boost debug no use"
     },
     {
@@ -15898,13 +15909,14 @@
       "byteOrder": "BIG_ENDIAN",
       "wordOrder": "BIG_ENDIAN",
       "bitIndex": 0,
-      "scaleFactor": 1,
+      "scaleFactor": 10,
       "offset": 0,
       "group": "Status & Alarms",
       "writable": false,
       "enabled": true,
       "sortOrder": 1560,
-      "description": "1560. StatusInfo_0x16 Voltage 10mV"
+      "description": "1560. StatusInfo_0x16 Voltage 10mV",
+      "unit": "mV"
     },
     {
       "key": "statusinfo_0x17_current_10ma_0619_ir",
@@ -15916,13 +15928,14 @@
       "byteOrder": "BIG_ENDIAN",
       "wordOrder": "BIG_ENDIAN",
       "bitIndex": 0,
-      "scaleFactor": 1,
+      "scaleFactor": 10,
       "offset": 0,
       "group": "Status & Alarms",
       "writable": false,
       "enabled": true,
       "sortOrder": 1561,
-      "description": "1561. StatusInfo_0x17 Current 10mA"
+      "description": "1561. StatusInfo_0x17 Current 10mA",
+      "unit": "mA"
     },
     {
       "key": "statusinfo_0x18_temperature_127_127_c_061a_ir",
@@ -15940,7 +15953,8 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 1562,
-      "description": "1562. StatusInfo_0x18 Temperature -127~127 ℃"
+      "description": "1562. StatusInfo_0x18 Temperature -127~127 ℃",
+      "unit": "°C"
     },
     {
       "key": "statusinfo_0x19_max_charge_current_10ma_061b_ir",
@@ -15952,13 +15966,14 @@
       "byteOrder": "BIG_ENDIAN",
       "wordOrder": "BIG_ENDIAN",
       "bitIndex": 0,
-      "scaleFactor": 1,
+      "scaleFactor": 10,
       "offset": 0,
       "group": "Status & Alarms",
       "writable": false,
       "enabled": true,
       "sortOrder": 1563,
-      "description": "1563. StatusInfo_0x19 Max. charge current 10mA"
+      "description": "1563. StatusInfo_0x19 Max. charge current 10mA",
+      "unit": "mA"
     },
     {
       "key": "bmscompany_bms_company_from_061c_ir",
@@ -17089,7 +17104,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 2053,
-      "unit": "kWH",
+      "unit": "kWh",
       "description": "2053. Eac today H Today generate energy (high) 0.1kWH SPA"
     },
     {
@@ -17108,7 +17123,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 2054,
-      "unit": "kWH",
+      "unit": "kWh",
       "description": "2054. Eac today L Today generate energy (low) 0.1kWH SPA"
     },
     {
@@ -17127,7 +17142,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 2055,
-      "unit": "kWH",
+      "unit": "kWh",
       "description": "2055. Eac total H Total generate energy (high) 0.1kWH SPA"
     },
     {
@@ -17146,7 +17161,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 2056,
-      "unit": "kWH",
+      "unit": "kWh",
       "description": "2056. Eac total L Total generate energy (low) 0.1kWH SPA"
     },
     {
@@ -17848,7 +17863,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 2093,
-      "unit": "C",
+      "unit": "°C",
       "description": "2093. Temp1 Inverter temperature 0.1C SPA"
     },
     {
@@ -17867,7 +17882,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 2094,
-      "unit": "C",
+      "unit": "°C",
       "description": "2094. Temp2 The inside IPM in inverter Temperature 0.1C SPA"
     },
     {
@@ -17886,7 +17901,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 2095,
-      "unit": "C",
+      "unit": "°C",
       "description": "2095. Temp3 Boost temperature 0.1C SPA"
     },
     {
@@ -18204,7 +18219,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 2112,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "2112. EACharge_Today _H ACCharge energy today 0.1kwh Storage Power"
     },
     {
@@ -18223,7 +18238,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 2113,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "2113. EACharge_Today _L ACCharge energy today 0.1kwh Storage Power"
     },
     {
@@ -18242,7 +18257,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 2114,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "2114. EACharge_Total _H ACCharge energy total 0.1kwh Storage Power"
     },
     {
@@ -18261,7 +18276,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 2115,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "2115. EACharge_Total _L ACCharge energy total 0.1kwh Storage Power"
     },
     {
@@ -18280,7 +18295,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 2116,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "2116. AC charge Grid power to local load 0.1kwh Storage 66 / 81 古瑞瓦特新能源股份有限公司 中国深圳市宝安区石岩街道办龙腾 社区光明路 28 号 P.C. 518000 Tel: 86 75529515888 www.growatt.com Growatt New Energy Technology Co., Ltd. #28 GuangmingRoad ,LongTeng community, Shiyan, Baoan District, Shenzhen, P.R. China. Power_H Power"
     },
     {
@@ -18299,7 +18314,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 2117,
-      "unit": "kwh",
+      "unit": "kWh",
       "description": "2117. AC charge Power_L Grid power to local load 0.1kwh Storage Power"
     },
     {
@@ -19681,13 +19696,14 @@
       "byteOrder": "BIG_ENDIAN",
       "wordOrder": "BIG_ENDIAN",
       "bitIndex": 0,
-      "scaleFactor": 1,
+      "scaleFactor": 0.1,
       "offset": 0,
       "group": "Other Parameters",
       "writable": false,
       "enabled": true,
       "sortOrder": 3088,
-      "description": "3088 DCI_R R DCI Curr 0.1mA"
+      "description": "3088 DCI_R R DCI Curr 0.1mA",
+      "unit": "mA"
     },
     {
       "key": "dci_s_s_dci_curr_0_1ma_0c11_ir",
@@ -19699,13 +19715,14 @@
       "byteOrder": "BIG_ENDIAN",
       "wordOrder": "BIG_ENDIAN",
       "bitIndex": 0,
-      "scaleFactor": 1,
+      "scaleFactor": 0.1,
       "offset": 0,
       "group": "Other Parameters",
       "writable": false,
       "enabled": true,
       "sortOrder": 3089,
-      "description": "3089 DCI_S S DCI Curr 0.1mA"
+      "description": "3089 DCI_S S DCI Curr 0.1mA",
+      "unit": "mA"
     },
     {
       "key": "dci_t_t_dci_curr_0_1ma_0c12_ir",
@@ -19717,13 +19734,14 @@
       "byteOrder": "BIG_ENDIAN",
       "wordOrder": "BIG_ENDIAN",
       "bitIndex": 0,
-      "scaleFactor": 1,
+      "scaleFactor": 0.1,
       "offset": 0,
       "group": "Other Parameters",
       "writable": false,
       "enabled": true,
       "sortOrder": 3090,
-      "description": "3090 DCI_T T DCI Curr 0.1mA"
+      "description": "3090 DCI_T T DCI Curr 0.1mA",
+      "unit": "mA"
     },
     {
       "key": "gfci_gfci_curr_1ma_0c13_ir",
@@ -19741,7 +19759,8 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 3091,
-      "description": "3091 GFCI GFCI Curr 1mA"
+      "description": "3091 GFCI GFCI Curr 1mA",
+      "unit": "mA"
     },
     {
       "key": "reserved_0c14_ir",
@@ -19978,7 +19997,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 3106,
-      "unit": "S",
+      "unit": "s",
       "description": "3106 Warning code Inverter Warning code 3107 Systemfault word0 System fault word0 bitfield 3108 Systemfault word1 System fault word1 bitfield 3109 Systemfault word2 System fault word2 bitfield 3110 Systemfault word3 System fault word3 bitfield 3111 Systemfault word4 System fault word4 bitfield 3112 Systemfault word5 System fault word5 bitfield 3113 Systemfault word6 System fault word6 bitfield 3114 Systemfault word7 System fault word7 bitfield 3115 inv start delay time inv start delay time 1S in"
     },
     {
@@ -20734,7 +20753,8 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 3162,
-      "description": "3162 DCV DC voltage 1mV"
+      "description": "3162 DCV DC voltage 1mV",
+      "unit": "mV"
     },
     {
       "key": "reserved_0c5b_ir",
@@ -22347,7 +22367,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 210,
-      "unit": "Var",
+      "unit": "var",
       "description": "Input register 210: CT reactive power word R high, 0.1Var resolution."
     },
     {
@@ -22366,7 +22386,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 211,
-      "unit": "Var",
+      "unit": "var",
       "description": "Input register 211: CT reactive power word R low, 0.1Var resolution."
     },
     {
@@ -22385,7 +22405,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 212,
-      "unit": "Var",
+      "unit": "var",
       "description": "Input register 212: CT reactive power word S high, 0.1Var resolution."
     },
     {
@@ -22404,7 +22424,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 213,
-      "unit": "Var",
+      "unit": "var",
       "description": "Input register 213: CT reactive power word S low, 0.1Var resolution."
     },
     {
@@ -22423,7 +22443,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 214,
-      "unit": "Var",
+      "unit": "var",
       "description": "Input register 214: CT reactive power word T high, 0.1Var resolution."
     },
     {
@@ -22442,7 +22462,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 215,
-      "unit": "Var",
+      "unit": "var",
       "description": "Input register 215: CT reactive power word T low, 0.1Var resolution."
     },
     {
@@ -22518,7 +22538,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 219,
-      "unit": "Var",
+      "unit": "var",
       "description": "Input register 219: compensated reactive power word R high, 0.1Var resolution."
     },
     {
@@ -22537,7 +22557,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 220,
-      "unit": "Var",
+      "unit": "var",
       "description": "Input register 220: compensated reactive power word R low, 0.1Var resolution."
     },
     {
@@ -22556,7 +22576,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 221,
-      "unit": "Var",
+      "unit": "var",
       "description": "Input register 221: compensated reactive power word S high, 0.1Var resolution."
     },
     {
@@ -22575,7 +22595,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 222,
-      "unit": "Var",
+      "unit": "var",
       "description": "Input register 222: compensated reactive power word S low, 0.1Var resolution."
     },
     {
@@ -22594,7 +22614,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 223,
-      "unit": "Var",
+      "unit": "var",
       "description": "Input register 223: compensated reactive power word T high, 0.1Var resolution."
     },
     {
@@ -22613,7 +22633,7 @@
       "writable": false,
       "enabled": true,
       "sortOrder": 224,
-      "unit": "Var",
+      "unit": "var",
       "description": "Input register 224: compensated reactive power word T low, 0.1Var resolution."
     },
     {
@@ -23677,5 +23697,5 @@
   ],
   "registerCount": 1284,
   "maxReadQuantity": 125,
-  "notes": "The MAX profile includes the documented inverter diagnostics, debug words, control settings and three-phase AC measurement entries. Explicit SPH4–11K/SPA-only storage blocks, reserved addresses and ranges marked no-use in the source manual are excluded."
+  "notes": "The MAX profile includes the documented inverter diagnostics, debug words, control settings and three-phase AC measurement entries. Explicit SPH4–11K/SPA-only storage blocks, reserved addresses and ranges marked no-use in the source manual are excluded. V1.13 reconciliation: PID PV1–PV8 currents use 0.1 mA/count; StatusInfo voltage/current and maximum charge current use 10 mV/count or 10 mA/count; DCI_R/S/T use 0.1 mA/count; GFCI uses 1 mA/count; DCV uses 1 mV/count; timing fields use 1 ms/count."
 }

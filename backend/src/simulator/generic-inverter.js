@@ -184,8 +184,8 @@ function valueForRegister(device, register, context) {
   if (/power[_ ]factor|\bpf\b/.test(label)) return context.powerFactor;
   if (/frequency|freq/.test(label)) return context.frequency;
   if (/temperature|temp/.test(label)) return 42.3;
-  if (/\bsoh\b|health/.test(label)) return model.batterySoh;
-  if (/\bsoc\b|state_of_charge/.test(label)) return model.batterySoc;
+  if (/\bsoh\b|health/.test(label)) return Number(register.scaleFactor) === 0.001 ? model.batterySoh / 100 : model.batterySoh;
+  if (/\bsoc\b|state_of_charge/.test(label)) return Number(register.scaleFactor) === 0.001 ? model.batterySoc / 100 : model.batterySoc;
   if (/battery_voltage/.test(label)) return 520;
   if (/battery_current/.test(label)) return -18.5;
   if (/battery.*charge.*power|charge.*power/.test(label)) return 2.1;

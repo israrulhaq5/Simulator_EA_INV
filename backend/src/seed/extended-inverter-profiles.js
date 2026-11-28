@@ -30,7 +30,7 @@ function makeProfile(identifier, displayName, definition, controls = {}) {
   return Object.freeze({
     identifier,
     name: displayName,
-    description: `${definition.source}. ${definition.registerCount} documented register parameters are included.`,
+    description: `${definition.source}. ${definition.registerCount} register definitions are catalogued; disabled entries are not served.`,
     manufacturer: definition.manufacturer,
     model: definition.model,
     registers,
@@ -62,7 +62,7 @@ const SOFAR_110KTL_PROFILE = makeProfile(
   'SOFAR 110KTL inverter',
   SOFAR_MAP,
   {
-    sourceUrl: 'https://drive.google.com/file/d/1w7n2BHKOBV-zs1enzNzO2Y86zRo8TqDp/view',
+    sourceUrl: 'https://docs.google.com/spreadsheets/d/1w7n2BHKOBV-zs1enzNzO2Y86zRo8TqDp/edit',
     powerControlKey: keyAt(SOFAR_MAP.registers, 2305),
     powerControlEnableKey: keyAt(SOFAR_MAP.registers, 2304),
     remoteOnOffKey: keyAt(SOFAR_MAP.registers, 2304),
