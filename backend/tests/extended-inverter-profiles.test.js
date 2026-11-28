@@ -58,7 +58,7 @@ test('six extended inverter profiles are valid, unique and included in built-ins
   const sunSpecId = foxess.registers.find((register) => /SunSpec ID/.test(register.name));
   assert.equal(sunSpecId.address, 40000);
   assert.equal(foxess.metadata.addressOffset, -1);
-  assert.equal(foxess.registers.filter((register) => register.enabled === false).length, 3);
+  assert.equal(foxess.registers.filter((register) => register.enabled === false && register.dataType === 'UINT32').length, 3);
 });
 
 test('six extended inverter devices are registered on TCP 502 with unit IDs 5-10', () => {
@@ -146,7 +146,7 @@ test('all six profiles generate telemetry and serve FC03/FC04 reads by unit ID',
     assert.equal(foxess.values.get(model703.key).value, 703);
     assert.equal(foxess.values.get(model704.key).value, 704);
 
-    const disabledFoxRegister = foxess.profile.registers.find((register) => register.enabled === false);
+    const disabledFoxRegister = foxess.profile.registers.find((register) => register.enabled === false && register.dataType === 'UINT32');
     assert.throws(
       () => vector.getMultipleHoldingRegisters(
         disabledFoxRegister.address,

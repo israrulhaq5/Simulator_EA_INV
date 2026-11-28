@@ -1927,10 +1927,10 @@
       "scaleFactor": 1,
       "offset": 0,
       "group": "Other Parameters",
-      "writable": false,
-      "enabled": false,
+      "writable": true,
+      "enabled": true,
       "sortOrder": 40374,
-      "description": "40374 Act Pt 1 (Number of active points.) Threshold:1~8 1 U16 RW Source-manual overlap: this U32 two-word span collides with the following Dept Ref register. Disabled until FoxESS clarifies the published map."
+      "description": "40374 Act Pt 1 (Number of active points.) Threshold:1~8 1 U16 RW"
     },
     {
       "key": "dept_ref_1_curve_dependent_reference_9db7_hr",
@@ -2578,7 +2578,7 @@
       "writable": false,
       "enabled": false,
       "sortOrder": 40467,
-      "description": "40467 Act Pt 1 (Number of active points.) 2 U32 RW Source-manual overlap: this U32 two-word span collides with the following Dept Ref register. Disabled until FoxESS clarifies the published map."
+      "description": "40467 Act Pt 1 (Number of active points.) 2 U32 RW Source-manual overlap: this U32 two-word span collides with the following Dept Ref register. Disabled until FoxESS clarifies the published map. Source-manual overlap: this U32 two-word span collides with the following Dept Ref register. Disabled until FoxESS clarifies the published map."
     },
     {
       "key": "dept_ref_1_9e14_hr",
@@ -2955,7 +2955,7 @@
       "writable": false,
       "enabled": false,
       "sortOrder": 40488,
-      "description": "40488 Act Pt_2 (Number of active points.) 2 U32 RW Source-manual overlap: this U32 two-word span collides with the following Dept Ref register. Disabled until FoxESS clarifies the published map."
+      "description": "40488 Act Pt_2 (Number of active points.) 2 U32 RW Source-manual overlap: this U32 two-word span collides with the following Dept Ref register. Disabled until FoxESS clarifies the published map. Source-manual overlap: this U32 two-word span collides with the following Dept Ref register. Disabled until FoxESS clarifies the published map."
     },
     {
       "key": "dept_ref_2_9e29_hr",
@@ -3332,7 +3332,7 @@
       "writable": false,
       "enabled": false,
       "sortOrder": 40509,
-      "description": "40509 Act Pt_3 (Number of active points.) 2 U32 RW Source-manual overlap: this U32 two-word span collides with the following Dept Ref register. Disabled until FoxESS clarifies the published map."
+      "description": "40509 Act Pt_3 (Number of active points.) 2 U32 RW Source-manual overlap: this U32 two-word span collides with the following Dept Ref register. Disabled until FoxESS clarifies the published map. Source-manual overlap: this U32 two-word span collides with the following Dept Ref register. Disabled until FoxESS clarifies the published map."
     },
     {
       "key": "dept_ref_3_9e3e_hr",
@@ -6832,10 +6832,10 @@
       "scaleFactor": 1,
       "offset": 0,
       "group": "Other Parameters",
-      "writable": false,
-      "enabled": false,
+      "writable": true,
+      "enabled": true,
       "sortOrder": 40880,
-      "description": "40880 Act Pt 1(Number of active points) 1 U16 RW Source-manual overlap: this U32 two-word span collides with the following Dept Ref register. Disabled until FoxESS clarifies the published map."
+      "description": "40880 Act Pt 1(Number of active points) 1 U16 RW"
     },
     {
       "key": "dept_ref_1_9fb1_hr",
