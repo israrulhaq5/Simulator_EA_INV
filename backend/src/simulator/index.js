@@ -115,8 +115,8 @@ function buildSharedVector(devices) {
   const call = (fnName, args) => {
     const unitId = args[args.length - 1];
     const device = byUnit.get(unitId) || (unitId === 0 ? devices[0] : undefined);
-    if (!device) {
-      throw modbusError(`No simulated device on unit ${unitId}.`, 0x0b);
+    if (!device || device.getStatus().state !== 'RUNNING') {
+      throw modbusError(`No running simulated device on unit ${unitId}.`, 0x0b);
     }
     return device.createVector()[fnName](...args);
   };
