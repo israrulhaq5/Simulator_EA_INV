@@ -14,6 +14,12 @@ function keyAt(registers, address, registerType = 'HOLDING_REGISTER') {
 }
 
 function makeProfile(identifier, displayName, definition, controls = {}) {
+  const {
+    sourceUrl,
+    addressing,
+    addressOffset,
+    ...simulatorControls
+  } = controls;
   const registers = Object.freeze(definition.registers.map((register) => Object.freeze(register)));
   const tags = Object.freeze([
     definition.manufacturer.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
@@ -34,13 +40,18 @@ function makeProfile(identifier, displayName, definition, controls = {}) {
     metadata: Object.freeze({
       profileVersion: 2,
       source: definition.source,
-      sourceUrl: controls.sourceUrl,
+      ...(sourceUrl ? { sourceUrl } : {}),
+      ...(addressing ? { addressing } : {}),
+      ...(addressOffset !== undefined ? { addressOffset } : {}),
       registerCount: registers.length,
-      notes: 'Manufacturer register tables imported with address, access, data type, word length, scale factor, unit and source description. Reserved gaps are not invented.',
+      notes: [
+        'Manufacturer register tables imported with address, access, data type, word length, scale factor, unit and source description. Reserved gaps are not invented.',
+        definition.notes,
+      ].filter(Boolean).join(' '),
       simulator: Object.freeze({
         genericInverter: true,
         ratingKw: definition.ratingKw,
-        ...controls,
+        ...simulatorControls,
       }),
     }),
   });
@@ -51,7 +62,7 @@ const SOFAR_110KTL_PROFILE = makeProfile(
   'SOFAR 110KTL inverter',
   SOFAR_MAP,
   {
-    sourceUrl: 'https://drive.google.com/file/d/1w7n2BHKOBV-zs1enzNzO2Y86zRo8TqDp/view',
+    sourceUrl: 'https://docs.google.com/spreadsheets/d/1w7n2BHKOBV-zs1enzNzO2Y86zRo8TqDp/edit',
     powerControlKey: keyAt(SOFAR_MAP.registers, 2305),
     powerControlEnableKey: keyAt(SOFAR_MAP.registers, 2304),
     remoteOnOffKey: keyAt(SOFAR_MAP.registers, 2304),
@@ -88,8 +99,10 @@ const FOXESS_RVH3_PROFILE = makeProfile(
   FOXESS_MAP,
   {
     sourceUrl: 'https://drive.google.com/file/d/1vRWJOxO-eS5ZzC83ZqLg_u3XVCKCNLXb/view',
-    powerControlKey: keyAt(FOXESS_MAP.registers, 40301),
-    powerControlEnableKey: keyAt(FOXESS_MAP.registers, 40300),
+    powerControlKey: keyAt(FOXESS_MAP.registers, 40300),
+    powerControlEnableKey: keyAt(FOXESS_MAP.registers, 40299),
+    addressOffset: -1,
+    addressing: 'FoxESS SunSpec manual addresses are one-based; stored addresses are Modbus PDU offsets (manual address minus one). Register descriptions retain the manufacturer address.',
   },
 );
 

@@ -25,7 +25,7 @@ const LEGACY_DEFAULT_PORTS = Object.freeze({
  * distinguished by unique unit IDs: EM500 meter (unit 1), Huawei SUN2000
  * inverter (unit 2), Solis inverter (unit 3), and Sungrow inverter (unit 4).
  */
-const simulatorDevices = Object.freeze({
+const baseSimulatorDevices = {
   em500: new SimulatorDevice({
     key: 'em500',
     deviceType: 'EM500 meter',
@@ -88,13 +88,54 @@ const simulatorDevices = Object.freeze({
       },
     },
   }),
+};
+
+const extendedSimulatorDevices = Object.fromEntries(
+  EXTENDED_INVERTER_PROFILES.map((profile, index) => {
+    const key = profile.identifier.split('-')[0];
+    const ratingKw = Number(profile.metadata?.simulator?.ratingKw) || 100;
+    return [key, new SimulatorDevice({
+      key,
+      deviceType: profile.name,
+      profile,
+      defaultConfiguration: {
+        host: '0.0.0.0',
+        port: MODBUS_TCP_PORT,
+        unitId: index + 5,
+        updateIntervalMs: 1000,
+        options: {
+          ratingKw,
+          availabilityPct: 80,
+          loadKw: 100,
+          zeroFillGaps: false,
+        },
+      },
+    })];
+  }),
+);
+
+const simulatorDevices = Object.freeze({
+  ...baseSimulatorDevices,
+  ...extendedSimulatorDevices,
 });
+
+const START_ORDER = Object.freeze([
+  'huawei', 'solis', 'sungrow',
+  'sofar', 'growatt', 'deye', 'foxess', 'goodwe', 'esinv',
+  'em500',
+]);
 
 // host:port -> { server, devices: Set }
 const sharedServers = new Map();
 
 function getDevice(key) {
   return simulatorDevices[key] || null;
+}
+
+function orderedDevices() {
+  const ordered = START_ORDER.map((key) => simulatorDevices[key]).filter(Boolean);
+  const included = new Set(ordered);
+  return ordered.concat(Object.values(simulatorDevices).filter((device) => !included.has(device)));
 }
 
 function portKeyOf(device) {
@@ -178,7 +219,17 @@ async function startSharedGroup(devices) {
     port: devices[0].configuration.port,
     unitID: 255, // respond to every unit ID; the vector dispatches
   });
-  await waitForServer(server);
+  try {
+    await waitForServer(server);
+  } catch (error) {
+    const port = devices[0].configuration.port;
+    if (error?.code === 'EACCES' && port < 1024) {
+      error.message = `Permission denied binding privileged Modbus TCP port ${port}. On Linux grant CAP_NET_BIND_SERVICE to the Node service; do not run the simulator as root.`;
+    } else if (error?.code === 'EADDRINUSE') {
+      error.message = `Modbus TCP endpoint ${devices[0].configuration.host}:${port} is already in use.`;
+    }
+    throw error;
+  }
 
   const attached = new Set();
   sharedServers.set(key, { server, devices: attached });
@@ -191,23 +242,14 @@ async function startSharedGroup(devices) {
 /** Group every farm device by host:port and start one shared server per port. */
 async function startAll() {
   const groups = new Map();
-  for (const device of Object.values(simulatorDevices)) {
+  // Preserve inverter-before-meter order inside each shared host:port group.
+  for (const device of orderedDevices()) {
     const groupKey = portKeyOf(device);
     if (!groups.has(groupKey)) groups.set(groupKey, []);
     groups.get(groupKey).push(device);
   }
-  // Start the inverters before the meter so the coupled meter's first tick
-  // already sees every inverter's output (grid = load - inverters).
-  const order = ['huawei', 'solis', 'sungrow', 'sofar', 'growatt', 'deye', 'foxess', 'goodwe', 'esinv', 'em500'];
-  const orderedGroups = [];
-  for (const key of order) {
-    const groupKey = portKeyOf(simulatorDevices[key]);
-    if (groups.has(groupKey) && !orderedGroups.includes(groupKey)) {
-      orderedGroups.push(groupKey);
-    }
-  }
-  for (const groupKey of orderedGroups) {
-    await startSharedGroup(groups.get(groupKey));
+  for (const group of groups.values()) {
+    await startSharedGroup(group);
   }
   return getStatus();
 }
@@ -224,7 +266,7 @@ async function startDevice(key) {
   const device = getDevice(key);
   if (!device) return getStatus();
   const groupKey = portKeyOf(device);
-  const group = Object.values(simulatorDevices).filter(
+  const group = orderedDevices().filter(
     (candidate) => portKeyOf(candidate) === groupKey,
   );
   await startSharedGroup(group);

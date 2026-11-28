@@ -68,11 +68,15 @@ function applyGenericInverterWrite(device, definition, value) {
 }
 
 function unitValue(value, unit) {
-  const normalized = String(unit || '').toLowerCase();
-  if (normalized.includes('mwh')) return value / 1000;
-  if (normalized === 'wh' || normalized.includes('wh') && !normalized.includes('kwh')) return value * 1000;
-  if (normalized === 'w' || normalized.includes('va') || normalized === 'var') return value * 1000;
-  if (normalized === 'kw' || normalized === 'kva' || normalized === 'kvar') return value;
+  const normalized = String(unit || '')
+    .trim()
+    .toLowerCase()
+    .replace(/^[-+]?\d+(?:\.\d+)?\s*/, '')
+    .replace(/\s+/g, '');
+  if (normalized === 'mwh') return value / 1000;
+  if (normalized === 'wh') return value * 1000;
+  if (['w', 'va', 'var', 'ma', 'mv'].includes(normalized)) return value * 1000;
+  if (['kw', 'kva', 'kvar'].includes(normalized)) return value;
   return value;
 }
 
@@ -81,24 +85,29 @@ function splitHighLow(register, value) {
   const key = String(register.key || '').toLowerCase();
   const high = /\bhigh\b|(?:^|[\s_])h(?:$|[\s_])/.test(name + ' ' + key);
   const low = /\blow\b|(?:^|[\s_])l(?:$|[\s_])/.test(name + ' ' + key);
-  if (!high && !low) return null;
+  if ((!high && !low) || Number(register.length || 1) !== 1) return null;
 
   const scale = Number(register.scaleFactor) || 1;
-  const raw = Math.max(0, Math.round(Number(value) / scale));
-  const word = high ? Math.floor(raw / 65536) : raw & 0xffff;
-  return word * scale;
+  const rawSigned = Math.round(Number(value) / scale);
+  const rawUnsigned = ((rawSigned % 0x100000000) + 0x100000000) % 0x100000000;
+  const word = high ? Math.floor(rawUnsigned / 0x10000) : rawUnsigned & 0xffff;
+  const encodedWord = register.dataType === 'INT16' && word >= 0x8000
+    ? word - 0x10000
+    : word;
+  return encodedWord * scale;
 }
 
 function valueForRegister(device, register, context) {
   const model = device.model;
-  const simulator = device.profile.metadata?.simulator || '';
+  const simulator = device.profile.metadata?.simulator || {};
   if (device.controlValues.has(register.key)) {
     return device.controlValues.get(register.key);
   }
 
   const key = String(register.key || '').toLowerCase();
   const name = String(register.name || '').toLowerCase();
-  const label = key + ' ' + name;
+  const description = String(register.description || '').toLowerCase();
+  const label = key + ' ' + name + ' ' + description;
   const unit = String(register.unit || '').toLowerCase();
 
   if (register.dataType === 'STRING') {
@@ -132,11 +141,15 @@ function valueForRegister(device, register, context) {
     return 0;
   }
 
-  if (/fault|alarm|warning|error|trip|diagnostic/.test(label)) return 0;
+  if (/fault|alarm|warning|error|trip|diagnostic|debug/.test(label)) return 0;
   if (/system_state/.test(key)) return 2;
   if (/status|state|mode/.test(label)) return context.running ? 1 : 2;
-  if (/serial|model_id|product_model_number|device_type|modbus_address/.test(key)) return 1;
-  if (/power_factor|\bpf\b/.test(label)) return context.powerFactor;
+  if (/model_id/.test(key)) {
+    const modelId = description.match(/model\s+id[^0-9]*(\d+)/i);
+    return modelId ? Number(modelId[1]) : 1;
+  }
+  if (/serial|product_model_number|device_type|modbus_address/.test(key)) return 1;
+  if (/power[_ ]factor|\bpf\b/.test(label)) return context.powerFactor;
   if (/frequency|freq/.test(label)) return context.frequency;
   if (/temperature|temp/.test(label)) return 42.3;
   if (/\bsoh\b|health/.test(label)) return model.batterySoh;
@@ -170,12 +183,12 @@ function valueForRegister(device, register, context) {
       : /phase[_ ]?c|phase l3|phase t/.test(label) ? 2 : 0;
     return model.phaseVoltage[phase];
   }
-  if (/grid_voltage|load_voltage|voltage_grid/.test(label)) return context.averageVoltage;
+  if (/grid[_ ]voltage|load[_ ]voltage|voltage[_ ]grid/.test(label)) return context.averageVoltage;
 
   if (/pv|mppt|dc_current|string.*current/.test(label) && /current/.test(label)) {
     return context.pvCurrent;
   }
-  if (/phase[_ ]?[abc].*current|grid_current|load_current|current.*phase/.test(label)) {
+  if (/phase[_ ]?[abc].*current|grid[_ ]current|load[_ ]current|current.*phase|current.*ct/.test(label)) {
     return context.phaseCurrent;
   }
 
@@ -217,7 +230,8 @@ function computeGenericInverter(device) {
   const availabilityPct = clamp(options.availabilityPct ?? 80, 0, 100);
   const loadKw = Math.max(0, Number(options.loadKw ?? 100));
   const deratingPct = model.powerControlEnabled ? clamp(model.deratingPct, 0, 110) : 100;
-  let outputKw = model.remoteOn
+  const running = Boolean(model.startedAt || device.state === 'RUNNING');
+  let outputKw = running && model.remoteOn
     ? ratingKw * (availabilityPct / 100) * (deratingPct / 100) * (0.985 + Math.random() * 0.03)
     : 0;
   if (model.fixedPowerLimitKw > 0) outputKw = Math.min(outputKw, model.fixedPowerLimitKw);
@@ -236,12 +250,15 @@ function computeGenericInverter(device) {
   const gridKw = loadKw - outputKw;
   const deltaHours = Math.max(100, Number(device.configuration.updateIntervalMs) || 1000) / 3600000;
 
-  model.totalYieldKwh += outputKw * deltaHours;
-  model.dailyYieldKwh += outputKw * deltaHours;
-  model.totalChargeKwh += 0.15 * deltaHours;
-  model.totalDischargeKwh += 0.12 * deltaHours;
-  model.gridImportKwh += Math.max(gridKw, 0) * deltaHours;
-  model.gridExportKwh += Math.max(-gridKw, 0) * deltaHours;
+  if (running) {
+    model.runningHours += deltaHours;
+    model.totalYieldKwh += outputKw * deltaHours;
+    model.dailyYieldKwh += outputKw * deltaHours;
+    model.totalChargeKwh += 0.15 * deltaHours;
+    model.totalDischargeKwh += 0.12 * deltaHours;
+    model.gridImportKwh += Math.max(gridKw, 0) * deltaHours;
+    model.gridExportKwh += Math.max(-gridKw, 0) * deltaHours;
+  }
   model.lastOutputKw = outputKw;
 
   const context = {
@@ -256,7 +273,7 @@ function computeGenericInverter(device) {
     pvCurrent,
     frequency: model.frequency,
     powerFactor,
-    running: Boolean(model.startedAt || device.state === 'RUNNING'),
+    running,
   };
 
   return Object.fromEntries(
